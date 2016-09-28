@@ -509,6 +509,8 @@ p {
   line-height: 50px;
   letter-spacing: 0.6px;
   font-family: 'Roboto', sans-serif;
+  color: #fff;
+  text-shadow: none;
 }
 #home .typed {
   font-weight: 300;
@@ -517,6 +519,8 @@ p {
   letter-spacing: 1.5px;
   margin: 0 auto;
   opacity: 0.6;
+  color: #fff;
+  text-shadow: none;
 }
 .year {
   font-size: 26px;
