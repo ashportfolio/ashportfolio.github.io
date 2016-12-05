@@ -3,6 +3,10 @@
 	.grey-bg, .white-bg{
 		padding: 40px 0; 
 	}
+	/*----- container mod ------*/
+	.container {
+		max-width: 95%;
+	}
 	/*---- hero -----*/
 	.hero-content{
 		min-width: 280px; 
