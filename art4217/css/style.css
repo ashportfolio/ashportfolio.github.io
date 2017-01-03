@@ -1143,7 +1143,8 @@ ul.portfolio-image li .desc.before-after {
 .wrap-about .w-content{
   position: absolute;
   left: 50%;
-  top: 35%;
+  top: 50%;
+  width: 65%;
   transform: translateX(-50%) translateY(-50%);
   -webkit-transform: translateX(-50%) translateY(-50%);
   -moz-transform: translateX(-50%) translateY(-50%);
@@ -1467,5 +1468,5 @@ ul.portfolio-image li .desc.before-after {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
 }
-.skillst .count-bar .count { background-color: #818181;}
-.skillst .count-bar .count span:after { border-top: 4px solid #818181;}
+.skillst .count-bar .count { background-color: rgba(20,20,20,0.5);}
+.skillst .count-bar .count span:after { border-top: 4px solid rgba(20,20,20,0.5);}

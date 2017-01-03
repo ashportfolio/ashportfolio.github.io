@@ -90,7 +90,7 @@
 
     //typed js
     $(".typed").typed({
-        strings: ["Designer. Instructor. Maker."],
+        strings: ["Advanced Digital Applications"],
         typeSpeed: 50,
         backDelay: 450,
         // loop
