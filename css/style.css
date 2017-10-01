@@ -67,7 +67,7 @@ a {
 }
 a:hover {
   text-decoration: none;
-  color: #818181;
+  color: #099F8A;
 }
 a:focus {
   outline: none;
@@ -510,7 +510,7 @@ p {
   font-weight: 300;
 }
 #home h1 {
-  font-size: 34px;
+  font-size: 44px;
   line-height: 1.2em;
   letter-spacing: 2px;
   font-family: 'Montserrat', sans-serif;
@@ -1144,6 +1144,7 @@ ul.portfolio-image li .desc.before-after {
   position: absolute;
   left: 50%;
   top: 35%;
+  width: 70%;
   transform: translateX(-50%) translateY(-50%);
   -webkit-transform: translateX(-50%) translateY(-50%);
   -moz-transform: translateX(-50%) translateY(-50%);
