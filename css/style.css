@@ -858,10 +858,10 @@ ul.portfolio-image li .image-bg {
 }
 @media screen and (max-width: 480px){
 	ul.portfolio-image li .image-bg {
-		opacity: 1;
+		opacity: 0;
 	}
 	ul.portfolio-image li .decription-wrap {
-    	background: rgba(255,255,255,0.25);
+    	background: rgba(255,255,255,0);
 	}
 }
 ul.portfolio-image li .image-bg.client {
