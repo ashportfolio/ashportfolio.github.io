@@ -83,6 +83,10 @@ img { max-width: 100%; }
   outline: none;
 }
 
+.aligncenter {
+  text-align: center;
+}
+
 /*----------------------------------------- 2) Preloader --------------------------------------------------*/
 #preloader {
   position: fixed;
@@ -823,7 +827,7 @@ ul.portfolio-image li {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  padding-top: 46%;
+  padding-top: 33%;
 }
 ul.portfolio-image li:hover {
   cursor: pointer;
@@ -1144,6 +1148,7 @@ ul.portfolio-image li .desc.before-after {
   min-height: 650px;
   display: inline-block;
   width: 100%;
+  border-bottom: 2px solid #eee;
 }
 .bg-about {
   background: url('../images/ashwin_anandani.jpeg');
