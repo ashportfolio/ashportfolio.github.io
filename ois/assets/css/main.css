@@ -1624,7 +1624,7 @@
 
 	body {
 		background-color: #2e3141;
-		background-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(46, 49, 65, 0.8)), url("../../images/bsd-car.jpg");
+		background-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(46, 49, 65, 0.8)), url("../../images/ois-bg.jpg");
 		background-size: auto, cover;
 		background-attachment: fixed, fixed;
 		background-position: center, center;
@@ -1703,7 +1703,7 @@
 
 		a:hover {
 			border-bottom-color: transparent;
-			color: #ffffff !important;
+			color: #e76828 !important;
 		}
 
 		a.special:not(.button) {
@@ -2727,7 +2727,7 @@
 		-webkit-transition: background-color 0.2s ease-in-out;
 		-ms-transition: background-color 0.2s ease-in-out;
 		transition: background-color 0.2s ease-in-out;
-		background-color: rgba(53, 56, 73, 0.95);
+		background-color: rgba(20, 20, 20, 0.85);
 		height: 3.5em;
 		left: 0;
 		line-height: 3.5em;
@@ -3389,7 +3389,7 @@
 			.wrapper.spotlight .image {
 				border-radius: 100%;
 				margin: 0 3em 2em 0;
-				width: 22em;
+				width: 50em;
 				overflow: hidden;
 				-ms-flex: 1;
 			}
@@ -3413,7 +3413,7 @@
 			}
 
 			.wrapper.spotlight:nth-child(2n - 1) .image {
-				margin: 0 0 2em 3em;
+				margin: 0 0 3em 4em;
 			}
 
 			.wrapper.spotlight.style2 {
