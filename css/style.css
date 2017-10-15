@@ -87,6 +87,13 @@ img { max-width: 100%; }
   text-align: center;
 }
 
+@media and (min-width: 1200px) {}
+  #work .container {
+    width: 95%;
+    padding-right: 5%;
+  }
+}
+
 /*----------------------------------------- 2) Preloader --------------------------------------------------*/
 #preloader {
   position: fixed;
