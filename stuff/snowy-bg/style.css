@@ -1,13 +1,18 @@
 /* - JUST FOR ME - */
-body {
-  transition: all 250ms linear;
+.loader {
+  transition: all 5s linear;
 }
+
+.base {
+  background-image: url('bg-1.png');
+  background-color: #111;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: -1500px;
+}
+
 .loop {
-    animation: looper 4.5s infinite;
-    background-color: #111;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 0% 30%;
+  animation: looper 4.5s infinite;
 }
 
 .controls {
@@ -15,7 +20,7 @@ body {
   display: inline-block;
   padding: 10px 30px;
   margin-left: 30%;
-  margin-top: 30%;
+  margin-top: 30%;;
 }
 
 .controls:hover {
@@ -26,16 +31,31 @@ body {
   display: inline-block;
   font-family: 'Gotham', sans-serif;
   font-weight: 100;
-  font-size: 0.5em;
+  font-size: 1em;
   text-align: center;
 }
-  .ctrl-box a {
+  .ctrl-box button {
     color: #9a9a9a;
+    background: none;
+    border: none;
   }
-  .ctrl-box a:hover {
+  .ctrl-box button:hover {
     text-decoration: none;
     color: #fff;
+    cursor: pointer;
   }
+
+
+@keyframes slowload {
+  0% {
+    opacity: 0;
+    background: #111;
+  }
+  100% {
+    opacity: 1;
+    background-image: url('bg-1.png');
+  }
+}
 
 @keyframes looper {
   0% {
