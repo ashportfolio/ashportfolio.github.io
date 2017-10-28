@@ -5,19 +5,24 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+<link href="https://fonts.googleapis.com/css?family=Saira+Semi+Condensed:400,600" rel="stylesheet">
 </head>
 
-<body class="base">
+<body class="base pos" id="boday">
+
+<div class="loader-bg">	
+
+</div>
 
 <span class="loader">
-	<i class="fa fa-dot-circle-o" syle="color:#fff;"></i><br>
+	<i class="fa fa-chrome"></i><br>
 </span>
 
 <div class="row">
 	<div class="container col-md-12">
 		<div class="titleContent controls col-md-6">
 			<div class="ctrl-box col-md-2">
-				<button id="full">
+				<button id="fsButton">
 					<i class="fa fa-expand"></i><br>
 					<p class="ctrl-text">fullscreen</p>
 				</button>
@@ -25,27 +30,21 @@
 			<div class="ctrl-box col-md-2">
 				<button id="fast">
 					<i class="fa fa-bolt"></i><br>
-					<p class="ctrl-text">snowstorm</p>
+					<p class="ctrl-text">faster</p>
 				</button>
 			</div>
 			<div class="ctrl-box col-md-2">
 				<button id="slow">
 					<i class="fa fa-book"></i><br>
-					<p class="ctrl-text">cosy</p>
-				</button>
-			</div>
-			<div class="ctrl-box col-md-2">
-				<button id="dim">
-					<i class="fa fa-moon-o"></i><br>
-					<p class="ctrl-text">dim</p>
+					<p class="ctrl-text">slower</p>
 				</button>
 			</div>
 		</div>
 	</div>
 </div>
 
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
-
-    <script  src="script.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+<script  src="script.js"></script>
+<script src="fullscreen.js"></script>
 
 </body>

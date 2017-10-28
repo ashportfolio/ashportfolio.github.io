@@ -1,26 +1,58 @@
 /* - JUST FOR ME - */
-.loader {
-  transition: all 5s linear;
+body {
+  font-family: 'Saira Semi Condensed', sans-serif;
+  font-weight: 400;
 }
 
 .base {
-  background-image: url('bg-1.png');
-  background-color: #111;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
-  background-position: -1500px;
+  height: 100vw;
+  min-width: 100%;
+  overflow: hidden;
+}
+
+.pos {
+  background-position: 0 -20%;
+}
+
+.loader-bg {
+  display: inline;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vw;
+  width: 100vw;
+  animation: slowload 9s linear;
+  -webkit-animation: slowload 9s linear;
+  transition: all 250ms linear;
+  -webkit-transition: all 250ms linear;
 }
 
 .loop {
   animation: looper 4.5s infinite;
+  -webkit-animation: looper 4.5s infinite;
+}
+
+
+.loader {
+  color: #fff;
+  display: inline;
+  position: absolute;
+  top: 25%;
+  left: 48%;
+  font-size: 3em;
+  animation: spin 9s linear;
+  -webkit-animation: spin 9s linear; /* Safari and Chrome */
+  opacity: 0;
 }
 
 .controls {
   opacity: 0;
   display: inline-block;
   padding: 10px 30px;
-  margin-left: 30%;
-  margin-top: 30%;;
+  margin-left: 70%;
+  margin-top: 40%;
 }
 
 .controls:hover {
@@ -29,11 +61,13 @@
 
 .ctrl-box {
   display: inline-block;
-  font-family: 'Gotham', sans-serif;
-  font-weight: 100;
-  font-size: 1em;
   text-align: center;
 }
+  .ctrl-text {
+    font-family: 'Saira Semi Condensed', sans-serif;
+    font-weight: 400;
+    font-size: 1em;
+  }
   .ctrl-box button {
     color: #9a9a9a;
     background: none;
@@ -46,101 +80,229 @@
   }
 
 
-@keyframes slowload {
-  0% {
-    opacity: 0;
-    background: #111;
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+    opacity: 0.9;
   }
-  100% {
-    opacity: 1;
-    background-image: url('bg-1.png');
+  to {
+    transform: rotate(360deg);
+    opacity: 0;
   }
 }
+@-webkit-keyframes spin {
+  from {
+   transform: rotate(0deg);
+   opacity: 0.9;
+  }
+  to {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slowload {
+ 0% {
+    background: #000;
+    opacity: 1;
+  }
+  75% {
+    background: #222;
+    opacity: 1;
+  }
+  100% {
+    background: #abc;
+    opacity: 0;
+  }
+}
+@-webkit-keyframes slowload {
+  0% {
+    background: #000;
+    opacity: 1;
+  }
+  75% {
+    background: #222;
+    opacity: 1;
+  }
+  100% {
+    background: #abc;
+    opacity: 0;
+  }
+}
+
 
 @keyframes looper {
   0% {
     background-image: url('bg-1.png');
-    opacity: 0.5;
+
   }
   9% {
     background-image: url('bg-1.png');
-    opacity: 0.5;
+
   }
   10% {
    background-image: url('bg-2.png'); 
-   opacity: 1;
+
   }
   19% {
    background-image: url('bg-2.png');
-   opacity: 0.5;
+   
   }
   20% {
     background-image: url('bg-3.png');
-    opacity: 1;
+    
   }
   29% {
     background-image: url('bg-3.png');
-    opacity: 0.5;
+    
   }
   30% {
     background-image: url('bg-4.png');
-    opacity: 1;
+    
   }
   39% {
     background-image: url('bg-4.png');
-    opacity: 0.5;
+    
   }
   40% {
     background-image: url('bg-5.png');
-    opacity: 1;
+    
   }
   49% {
     background-image: url('bg-5.png');
-    opacity: 0.5;
+    
   }
   50% {
     background-image: url('bg-6.png');
-    opacity: 1;
+    
   }
   59% {
     background-image: url('bg-6.png');
-    opacity: 0.5;
+    
   }
   60% {
     background-image: url('bg-7.png');
-    opacity: 1;
+    
   }
   69% {
     background-image: url('bg-7.png');
-    opacity: 0.5;
+    
   }
   70% {
     background-image: url('bg-8.png');
-    opacity: 1;
+    
   }
   79% {
     background-image: url('bg-8.png');
-    opacity: 0.5;
+    
   }
   80% {
     background-image: url('bg-9.png');
-    opacity: 1;
+    
   }
   89% {
     background-image: url('bg-9.png');
-    opacity: 0.5;
+    
   }
   90% {
     background-image: url('bg-99.png');
-    opacity: 1;
+    
   }
   99% {
     background-image: url('bg-99.png');
-    opacity: 0.5;
+    
   }
   100% {
     background-image: url('bg-1.png');
-    opacity: 1;
+    
+  }
+
+}
+@-webkit-keyframes looper {
+  0% {
+    background-image: url('bg-1.png');
+    
+  }
+  9% {
+    background-image: url('bg-1.png');
+    
+  }
+  10% {
+   background-image: url('bg-2.png'); 
+   
+  }
+  19% {
+   background-image: url('bg-2.png');
+   
+  }
+  20% {
+    background-image: url('bg-3.png');
+    
+  }
+  29% {
+    background-image: url('bg-3.png');
+    
+  }
+  30% {
+    background-image: url('bg-4.png');
+    
+  }
+  39% {
+    background-image: url('bg-4.png');
+    
+  }
+  40% {
+    background-image: url('bg-5.png');
+    
+  }
+  49% {
+    background-image: url('bg-5.png');
+    
+  }
+  50% {
+    background-image: url('bg-6.png');
+    
+  }
+  59% {
+    background-image: url('bg-6.png');
+    
+  }
+  60% {
+    background-image: url('bg-7.png');
+    
+  }
+  69% {
+    background-image: url('bg-7.png');
+    
+  }
+  70% {
+    background-image: url('bg-8.png');
+    
+  }
+  79% {
+    background-image: url('bg-8.png');
+    
+  }
+  80% {
+    background-image: url('bg-9.png');
+   
+  }
+  89% {
+    background-image: url('bg-9.png');
+    
+  }
+  90% {
+    background-image: url('bg-99.png');
+    
+  }
+  99% {
+    background-image: url('bg-99.png');
+    
+  }
+  100% {
+    background-image: url('bg-1.png');
+    
   }
 
 }
