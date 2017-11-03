@@ -13,7 +13,7 @@ body {
 }
 
 .pos {
-  background-position: 0 -20%;
+  background-position: 0 -10%;
 }
 
 .loader-bg {
@@ -30,8 +30,8 @@ body {
 }
 
 .loop {
-  animation: looper 4.5s infinite;
-  -webkit-animation: looper 4.5s infinite;
+  animation: looper 7.5s infinite;
+  -webkit-animation: looper 7.5s infinite;
 }
 
 
@@ -137,172 +137,171 @@ body {
     background-image: url('bg-1.png');
 
   }
-  9% {
-    background-image: url('bg-1.png');
-
-  }
-  10% {
+  5% {
    background-image: url('bg-2.png'); 
 
   }
-  19% {
-   background-image: url('bg-2.png');
+  10% {
+   background-image: url('bg-3.png');
    
   }
-  20% {
-    background-image: url('bg-3.png');
+  15% {
+    background-image: url('bg-4.png');
     
   }
-  29% {
-    background-image: url('bg-3.png');
+  20% {
+    background-image: url('bg-5.png');
+    
+  }
+  25% {
+    background-image: url('bg-6.png');
     
   }
   30% {
-    background-image: url('bg-4.png');
+    background-image: url('bg-7.png');
     
   }
-  39% {
-    background-image: url('bg-4.png');
+  35% {
+    background-image: url('bg-8.png');
     
   }
   40% {
-    background-image: url('bg-5.png');
+    background-image: url('bg-9.png');
     
   }
-  49% {
-    background-image: url('bg-5.png');
+  45% {
+    background-image: url('bg-10.png');
     
   }
   50% {
-    background-image: url('bg-6.png');
+    background-image: url('bg-11.png');
     
   }
-  59% {
-    background-image: url('bg-6.png');
+  55% {
+    background-image: url('bg-12.png');
     
   }
   60% {
-    background-image: url('bg-7.png');
+    background-image: url('bg-13.png');
     
   }
-  69% {
-    background-image: url('bg-7.png');
+  65% {
+    background-image: url('bg-14.png');
     
   }
   70% {
-    background-image: url('bg-8.png');
+    background-image: url('bg-15.png');
     
   }
-  79% {
-    background-image: url('bg-8.png');
+  75% {
+    background-image: url('bg-16.png');
     
   }
   80% {
-    background-image: url('bg-9.png');
+    background-image: url('bg-17.png');
     
   }
-  89% {
-    background-image: url('bg-9.png');
+  85% {
+    background-image: url('bg-18.png');
     
   }
   90% {
-    background-image: url('bg-99.png');
+    background-image: url('bg-19.png');
     
   }
-  99% {
-    background-image: url('bg-99.png');
+  95% {
+    background-image: url('bg-20.png');
     
   }
   100% {
-    background-image: url('bg-1.png');
+    background-image: url('bg-21.png');
     
   }
 
 }
 @-webkit-keyframes looper {
-  0% {
+    0% {
     background-image: url('bg-1.png');
-    
+
   }
-  9% {
-    background-image: url('bg-1.png');
-    
+  5% {
+   background-image: url('bg-2.png'); 
+
   }
   10% {
-   background-image: url('bg-2.png'); 
+   background-image: url('bg-3.png');
    
   }
-  19% {
-   background-image: url('bg-2.png');
-   
-  }
-  20% {
-    background-image: url('bg-3.png');
+  15% {
+    background-image: url('bg-4.png');
     
   }
-  29% {
-    background-image: url('bg-3.png');
+  20% {
+    background-image: url('bg-5.png');
+    
+  }
+  25% {
+    background-image: url('bg-6.png');
     
   }
   30% {
-    background-image: url('bg-4.png');
+    background-image: url('bg-7.png');
     
   }
-  39% {
-    background-image: url('bg-4.png');
+  35% {
+    background-image: url('bg-8.png');
     
   }
   40% {
-    background-image: url('bg-5.png');
+    background-image: url('bg-9.png');
     
   }
-  49% {
-    background-image: url('bg-5.png');
+  45% {
+    background-image: url('bg-10.png');
     
   }
   50% {
-    background-image: url('bg-6.png');
+    background-image: url('bg-11.png');
     
   }
-  59% {
-    background-image: url('bg-6.png');
+  55% {
+    background-image: url('bg-12.png');
     
   }
   60% {
-    background-image: url('bg-7.png');
+    background-image: url('bg-13.png');
     
   }
-  69% {
-    background-image: url('bg-7.png');
+  65% {
+    background-image: url('bg-14.png');
     
   }
   70% {
-    background-image: url('bg-8.png');
+    background-image: url('bg-15.png');
     
   }
-  79% {
-    background-image: url('bg-8.png');
+  75% {
+    background-image: url('bg-16.png');
     
   }
   80% {
-    background-image: url('bg-9.png');
-   
+    background-image: url('bg-17.png');
+    
   }
-  89% {
-    background-image: url('bg-9.png');
+  85% {
+    background-image: url('bg-18.png');
     
   }
   90% {
-    background-image: url('bg-99.png');
+    background-image: url('bg-19.png');
     
   }
-  99% {
-    background-image: url('bg-99.png');
+  95% {
+    background-image: url('bg-20.png');
     
   }
   100% {
-    background-image: url('bg-1.png');
+    background-image: url('bg-21.png');
     
   }
-
 }
