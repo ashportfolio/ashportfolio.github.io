@@ -1,0 +1,23 @@
+Concept:
+‘Pinterest for Music’: collect your music into different piles for saving / listening / sharing
+
+User Groups:
+- House-lovers 25 - 44 who collect different tracks and mixes
+
+
+Actions:
+1 
+2 
+3 
+
+
+Features:
+- Search for vids from YouTube, SoundCloud, Beatport, and Google
+- Make collections of different types of house music
+- Play them as streams
+- Share or recommend tracks and mixes to friends (as URL)
+- Generate mixes from an artist to discover new house music
+- Generate mixes from a tag to discover new house music
+- Organise and add tags to music collections
+- ‘Collect’ button for other sites
+- Choose a bg to look at while listening —> chill.bg
