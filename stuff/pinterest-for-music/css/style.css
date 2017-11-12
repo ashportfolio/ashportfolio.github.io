@@ -1,0 +1,77 @@
+body {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 300% 300%;
+  background-image: linear-gradient(
+        -45deg, 
+        rgba(59,73,227,1) 0%, 
+        rgba(87,11,230,1) 25%, 
+        rgba(52,68,183,1) 51%, 
+        rgba(55,53,127,1) 100%
+  );  
+  animation: AnimateBG 20s ease infinite;
+  color: #fafafa;
+}
+
+@keyframes AnimateBG { 
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.sidebar-logo {
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 7em;
+  margin-bottom: 3em;
+  text-align: center;
+}
+
+.sidebar-logo img {
+  max-width: 50%;
+}
+
+.tagline {
+  margin-top: 1em;
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+  width: 60%;
+  margin-left: 3.5em;
+}
+
+.sidebar-menu-list button {
+  background: none;
+  border: none;
+  color: #fafafa;
+  text-align: left;
+  padding: 0.8em 2em;
+}
+.sidebar-menu-list button:hover {
+  color: rgba(255,255,255,0.75);
+  padding-bottom: 1em 2em;
+  cursor: pointer;
+  transition: all 500ms ease;
+}
+.fa {
+  margin-right: 20px;
+}
+
+.main {
+  padding: 1em 2em;
+}
+
+.collection {
+  border: 1px solid #abc;
+  background: none;
+  color: #fafafa;
+  padding: 3em 2em;
+  margin: 2em;
+}
+
+.empty {
+  background: rgba(255,255,255,0.55);
+}
