@@ -175,6 +175,13 @@ img { max-width: 100%; }
   letter-spacing: 0.4px;
   font-family: 'Open Sans', serif;
 }
+.content-detail.especial {
+  font-size: 22px;
+  line-height: 30px;
+}
+.content-detail.especial a {
+  color: #72587F;
+}
 .content-details {
   font-weight: 400;
   margin-top: 40px;
@@ -274,6 +281,9 @@ img { max-width: 100%; }
   transition: opacity 0.4s, transform 0s 0.4s;
   -webkit-transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
   transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
+}
+.content-center {
+  text-align: center;
 }
 /* Menu Button */
 .menu-button {
@@ -860,6 +870,9 @@ ul.portfolio-image li {
   position: relative;
   display: inline-block;
   overflow: hidden;
+  padding-top: 46%;
+}
+.home ul.portfolio-image li {
   padding-top: 33%;
 }
 ul.portfolio-image li:hover {
