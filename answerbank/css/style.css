@@ -1,0 +1,30 @@
+.moreContent {
+  display:none;
+}
+.showMore {
+  color:blue;
+  text-decoration:underline;
+  cursor: pointer;
+}
+.showMore:focus ~ .moreContent {
+  display: block;
+}
+.hideMore {
+  color:indianred;
+  text-decoration:underline;
+  cursor: pointer;
+}
+.hideMore:focus ~ .moreContent {
+  display: none;
+}
+
+.logo {
+  width: 15em;
+  height: auto;
+  margin: 20px auto 10px auto;
+}
+
+.blockBtm {
+  height:100px;
+  background: #323232;
+}

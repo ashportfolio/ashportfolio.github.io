@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>AnswerBank MVP</title>
+  
+  
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
+
+      <link rel="stylesheet" href="css/style.css">
+
+  
+</head>
+
+<body>
+
+  <div class="container" id="content">
+  <hr>
+  <h5 style="color:grey;letter-spacing: 3pt;font-family:Helvetica, sans-serif;">DR. ALEXIS SHIELDS</h5>
+  <hr>
+  <h3>Your Blood Test Interpretation</h3>
+  <br />
+  
+  <form id="testForm" class="">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="name">Patient Name:</label>
+          <select class="form-control" id="ptntName" onchange="copy();">
+          <option>Select a patient</option>
+            <option>Jane Doe</option>
+            <option>John M Doe</option>
+            <option>Mr Fakey</option>
+            <option>Bear the Dog</option>
+            <option>Add an option</option>
+          </select>
+          <p id="patientName"></p>
+        </div>
+      </div>
+      <!--  col-md-6   -->
+      
+      <div class="col-md-offset 2 col-md-2">
+        <div class="form-group">
+          <label for="id">Patient ID:</label>
+          <p id="ptntId"> </p>
+        </div>
+      <!--  col-md-2   -->
+    </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="first">Health Score:</label>
+          <input type="number" min="1" max="100" class="form-control" placeholder="" id="hlthScore" onchange="copy();">
+          <span id="healthScore"></span> out of  100.
+        </div>
+      </div>
+      <!--  col-md-3   -->
+
+      <div class="col-md-offset-2 col-md-3">
+        <div class="form-group">
+          <label for="last">Bloodwork - Latest Blood Test Date:</label>
+          <input type="date" class="form-control" placeholder="" id="latestTest" onchange="copy();"><span id="lastTest"></span>
+        </div>
+      </div>
+      <!--  col-md-4   -->
+    </div>
+    
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="bloodsugar">Your Blood Sugar Control:</label>
+          <select class="form-control" placeholder="" id="bloodSugar" onchange="copy();">
+            <option>Select an answer</option>
+            <option>Low - Stop eating so much sugar.
+</option>
+            <option>Medium - You consume some sugar.
+</option>
+            <option>High - You're very controlled about sugar, nice.
+</option>
+<option>Add an option</option>
+          </select>
+          <p id="bloodOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="trilevels">Your Triglyceride Levels are:</label>
+          <select class="form-control" placeholder="" id="triLevels" onchange="copy();">
+            <option>Select an answer</option>
+            <option>Low - Low triglyceride levels may indicate that your dietary fat intake is too low, diseases of malabsorption, or a thyroid disorder. Low levels are also correlated with increased risk for autoimmune disease and other chronic disease states. 
+This suggests that you are eating too many foods high in carbohydrates and starch.
+</option>
+            <option>Medium - Low triglyceride levels may indicate that your dietary fat intake is too low, diseases of malabsorption, or a thyroid disorder. Low levels are also correlated with increased risk for autoimmune disease and other chronic disease states. 
+This suggests that you are eating too many foods high in carbohydrates and starch.
+</option>
+            <option>High - Low triglyceride levels may indicate that your dietary fat intake is too low, diseases of malabsorption, or a thyroid disorder. Low levels are also correlated with increased risk for autoimmune disease and other chronic disease states. 
+This suggests that you are eating too many foods high in carbohydrates and starch.
+</option>
+            <option>Add an option</option>
+          </select>
+          <p id="triOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+
+    <div class="row">
+      <div class="col-md-8">
+        <b>IGF-1 Levels</b> <span class="showMore" tabindex="0">What are these?</span>
+        <p class="moreContent">
+        <em>IGF-1 is anti aging, increases longevity, decreases inflammation, good for focus/brain health, helps to build muscle, protective against heart disease, increases bone density, builds immune the system, good for the skin, helps electrolyte balance, and protects digestive health.</em><br />
+        <span class="hideMore" tabindex="0">Hide</span>
+        </p>
+        <div class="form-group">
+          <br />
+          <label for="igflevels">Your IGF-1 Levels are:</label>
+          <select class="form-control" placeholder="" id="igfLevels" onchange="copy();">
+            <option>Select an answer</option>
+            <option>N/A
+</option>
+            <option>Low to Average
+</option>
+            <option>Avg to Above Avg
+</option>
+            <option>Very High
+</option>
+            <option>Add an option</option>
+          </select>
+          <p id="igfOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <br />
+    <!--  row   -->
+    
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="company">Your Kidney Function is:</label>
+          <select class="form-control" placeholder="" id="kidneyFctn" onchange="copy();">
+            <option>Select an answer</option>
+            <option>N/A
+</option>
+            <option>Lower Than Normal - xyz bla bla
+</option>
+            <option>Normal - xyz bla bla</option>
+            <option>Above Average - xyz bla bla</option>
+            <option>Add an option</option>
+          </select>
+          <p id="kidneyOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="elminlevels">Your Electrolyte & Mineral Balance:</label>
+          <select class="form-control" placeholder="" id="elminLevels" onchange="copy();">
+            <option>Select an answer</option>
+            <option>N/A
+</option>
+            <option>Alkaline - This indicates that your overall body pH is too acidic. Reduce sugar intake, increase intake of brightly colored vegetables, and adopt a regular stress relieving practice such as HeadSpace.
+</option>
+            <option>Balanced - This indicates that your overall body pH is balanced. Continue as normal.</option>
+            <option>Basic - This indicates that your overall body pH is not acidic enough. Increase sugar intake, lower intake of brightly colored vegetables, and adopt a higher stress practice such as having a spouse.</option>
+            <option>Add an option</option>
+          </select>
+          <p id="elminOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+   
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="maglevels">Your Magnesium Levels are:</label>
+          <select class="form-control" placeholder="" id="magLevels" onchange="copy();">
+            <option>Select an answer</option>
+            <option>N/A
+</option>
+            <option>Low: You would benefit from regular topical magnesium bath salts, cream, or oil. <em>Recommended brand - <a href="http://ancient-minerals.com/" target="_blank">Ancient Minerals</a>.</em></option>
+            <option>Balanced - continue as normal.</option>
+            <option>High - consider eating less mag.</option>
+            <option>Add an option</option>
+          </select>
+          <p id="magOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+ 
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group">
+          <label for="adrenalscore">Your Adrenal Score:</label>
+          <select class="form-control" placeholder="" id="adrenalScore" onchange="copy();">
+            <option>Select an answer</option>
+            <option>N/A
+</option>
+            <option>Higher Than Normal - Your body is likely adapting to the effects of mental, emotional, and environmental stressors in a healthy way.
+</option>
+            <option>Normal - Your body is not adapting to the effects of mental, emotional, and environmental stressors and it is impacting your health.</option>
+            <option>Add an option</option>
+          </select>
+          <p id="adrenalOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div class="row">
+      <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+          <h4>Next Blood Test</h4>
+          <p>To follow the progression of your health over time, as well as the progress made with your plan, it is important to regularly check-in on your health biomarkers.</p><br />
+          <label for="biomarkers">What we will monitor next:</label>
+          <select multiple class="form-control" placeholder="" id="bioMs" onchange="copy();">
+            <option>Biomarker Number one</option>
+            <option>Biomarker Number two
+</option>
+            <option>Biomarker Number three</option>
+          <option>Biomarker Number four</option>
+          </select>
+          <p id="biomOut"> </p>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div id="disclaimer" class="row hidden">
+      <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+          <hr>
+          <h5>DISCLAIMER</h5>
+          <p class="small">The information contained within this document is for informational purposes only. It is not a substitute for the advice from your primary care provider. Dr. Alexis Shields does not act in the capacity of a primary care physician for virtual clients and does not diagnose or prescribe. Please visit your doctor for all medical concerns and before making any changes to your diet and exercise regime, and before taking any dietary supplements.</p><br />
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <br />
+    
+    <div id="editor"></div>
+</form>
+  </div>
+  <div class="container" style="margin-bottom: 4em;">
+   <div class="row">
+    <div class="col-md-8">
+      <button class="btn btn-primary" style="background:#323232;margin-right:5px;" id="clean">Save</button> 
+      <button class="btn btn-secondary hidden" style="border:1px solid #323232;margin-right:20px;" id="cmd">Export as PDF</button> 
+    <button class="btn btn-primary hidden" id="export" onclick="Export2Doc('content');">Export to Word</button>
+    </div>
+   </div>
+</div>
+&nbsp;
+<div class="blockBtm"></div>
+  <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+
+
+
+</body>
+
+</html>
