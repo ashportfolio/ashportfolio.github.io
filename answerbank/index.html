@@ -5,11 +5,15 @@
   <meta charset="UTF-8">
   <title>AnswerBank MVP</title>
   
-  
   <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
+  <link rel="stylesheet" href="css/style.css">
 
-      <link rel="stylesheet" href="css/style.css">
-
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+  <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js'></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/jquery-index.js"></script>
   
 </head>
 
@@ -72,17 +76,10 @@
       <div class="col-md-8">
         <div class="form-group">
           <label for="bloodsugar">Your Blood Sugar Control:</label>
-          <select class="form-control" placeholder="" id="bloodSugar" onchange="copy();">
-            <option>Select an answer</option>
-            <option>Low - Stop eating so much sugar.
-</option>
-            <option>Medium - You consume some sugar.
-</option>
-            <option>High - You're very controlled about sugar, nice.
-</option>
-<option>Add an option</option>
-          </select>
-          <p id="bloodOut"> </p>
+          <div class="ui-widget">
+            <input type="text" id="tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="bloodOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -106,7 +103,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
 </option>
             <option>Add an option</option>
           </select>
-          <p id="triOut"> </p>
+          <p id="triOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -135,7 +132,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
 </option>
             <option>Add an option</option>
           </select>
-          <p id="igfOut"> </p>
+          <p id="igfOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -157,7 +154,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
             <option>Above Average - xyz bla bla</option>
             <option>Add an option</option>
           </select>
-          <p id="kidneyOut"> </p>
+          <p id="kidneyOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -178,7 +175,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
             <option>Basic - This indicates that your overall body pH is not acidic enough. Increase sugar intake, lower intake of brightly colored vegetables, and adopt a higher stress practice such as having a spouse.</option>
             <option>Add an option</option>
           </select>
-          <p id="elminOut"> </p>
+          <p id="elminOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -198,7 +195,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
             <option>High - consider eating less mag.</option>
             <option>Add an option</option>
           </select>
-          <p id="magOut"> </p>
+          <p id="magOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -218,7 +215,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
             <option>Normal - Your body is not adapting to the effects of mental, emotional, and environmental stressors and it is impacting your health.</option>
             <option>Add an option</option>
           </select>
-          <p id="adrenalOut"> </p>
+          <p id="adrenalOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -238,7 +235,7 @@ This suggests that you are eating too many foods high in carbohydrates and starc
             <option>Biomarker Number three</option>
           <option>Biomarker Number four</option>
           </select>
-          <p id="biomOut"> </p>
+          <p id="biomOut"> </p> <a class="edit-btn" id="edit">Edit this answer</a>
         </div>
       </div>
       <!--  col-md-8   -->
@@ -269,20 +266,14 @@ This suggests that you are eating too many foods high in carbohydrates and starc
       <button class="btn btn-secondary hidden" style="border:1px solid #323232;margin-right:20px;" id="cmd">Export as PDF</button> 
     <button class="btn btn-primary hidden" id="export" onclick="Export2Doc('content');">Export to Word</button>
     </div>
+    <div class="col-md-12">
+      <br><br>
+      <a href="https://okt3o2.axshare.com/my_documents.html" target="_blank" style="margin-top:2em;padding:1em 4em;" class="btn btn-primary hidden" id="back">Return to Prototype &gt;</button>
+    </div>
    </div>
 </div>
 &nbsp;
 <div class="blockBtm"></div>
-  <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js'></script>
-
-  
-
-    <script  src="js/index.js"></script>
-
-
-
 
 </body>
 

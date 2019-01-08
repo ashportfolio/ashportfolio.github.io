@@ -1,3 +1,24 @@
+/*AUTOCOMPLETE */
+#ui-id-1 {
+  background: #fff;
+  border: 1px solid #dedede;
+  padding: 1em 2em 1em 0.8em;
+  margin-top: -10px;
+  list-style-type: none;
+  width: 50%;
+}
+.ui-helper-hidden-accessible {
+  display: none;
+}
+
+#ui-id-1 li {
+  line-height: 1.5em;
+  cursor: pointer;
+}
+#ui-id-1 li:hover {
+  background: #fafafa;
+}
+
 .moreContent {
   display:none;
 }

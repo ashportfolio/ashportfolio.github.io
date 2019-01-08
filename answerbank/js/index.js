@@ -1,9 +1,28 @@
+$( function() {
+    var availableTags = [
+      "ADD AN OPTION: <input type='text' class='form-control'>",
+      "N/A",
+      "Below Average / Low - eat some sugar",
+      "Average - Continue as normal with sugar",
+      "Above Average - Cut down on sugar a little",
+      "Through the Roof - Woah man, calma on the cookies.",
+      "Unrelated option one or two",
+      "Lorem ipsum dolor sit amet",
+      "Consectitur adipscing elit",
+      "<a href='http://google.com' target='_blank' class='category-Herbs'>This is a working link</a>",
+      "Some huge body of text is written here just to show how it appears and is filtered yay"
+    ];
+    $( "#tags" ).autocomplete({
+      source: availableTags
+    });
+} );
+
 function copy() { 
 document.getElementById("patientName").innerHTML=document.getElementById("ptntName").value,
 document.getElementById("ptntId").innerHTML="12345",
 document.getElementById("healthScore").innerHTML=document.getElementById("hlthScore").value,
 document.getElementById("lastTest").innerHTML=document.getElementById("latestTest").value,
-document.getElementById("bloodOut").innerHTML=document.getElementById("bloodSugar").value,
+document.getElementById("bloodOut").innerHTML=document.getElementById("tags").value,
 document.getElementById("triOut").innerHTML=document.getElementById("triLevels").value,
 document.getElementById("igfOut").innerHTML=document.getElementById("igfLevels").value,
 document.getElementById("kidneyOut").innerHTML=document.getElementById("kidneyFctn").value,
@@ -13,28 +32,12 @@ document.getElementById("adrenalOut").innerHTML=document.getElementById("adrenal
 document.getElementById("biomOut").innerHTML=document.getElementById("bioMs").value;
 };
 
-$('#clean').click(function () {
-  $('#clean').hide();
-  $('.form-control').remove();
-  $('#disclaimer').removeClass('hidden');
-  $('#cmd').removeClass('hidden');
-  $('#export').removeClass('hidden');
-});
-
 var doc = new jsPDF();
 var specialElementHandlers = {
     '#editor': function (element, renderer) {
         return true;
     }
 };
-
-$('#cmd').click(function () {
-    doc.fromHTML($('#content').html(), 15, 15, {
-        'width': 170,
-            'elementHandlers': specialElementHandlers
-    });
-    doc.save('sample-file.pdf');
-});
 
 function Export2Doc(element, filename = ''){
     var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
