@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>AnswerBank MVP</title>
+  
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+  <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js'></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/jquery-index.js"></script>
+  
+</head>
+
+<body>
+
+  <div class="container" id="content">
+  <hr>
+  <h5 style="color:grey;letter-spacing: 3pt;font-family:Helvetica, sans-serif;">DR. ALEXIS SHIELDS</h5>
+  <hr>
+
+  <form id="testForm" class="">
+  	<div class="row">
+      
+      <div class="col-md-6">
+        <div class="form-group">
+  			<h4>Recommendations for <span id="PatientName"> </span><br><br>
+	  			<div class="form-group">
+	          		<select class="form-control" id="ptntName" onchange="copy();">
+			           <option>Jane Doe</option>
+			           <option>John M Doe</option>
+			           <option>Mr Fakey</option>
+			           <option>Bear the Dog</option>
+			    	</select>
+		        </div>
+  			</h4>
+        </div>
+      </div>
+      <!--  col-md-6   -->
+      
+      <div class="col-md-offset-1 col-md-4">
+        <div class="form-group">
+          <h4>Date: <span id="currentDate"> </span></h4>
+          <input type="date" class="form-control" id="crrntDate" onchange="copy();"><h3 id="lastTest"></h3>
+      	</div>
+      </div>
+      <!--  col-md-offset-1 col-md-4   -->
+
+      <div class="col-md-12">
+      	<h4>Table of Contents:</h4>
+		<hr>
+      </div>
+      <div class="col-md-5">
+        <div class="form-group">
+          <ul class="content-list">
+          	<li><a href="#reminders">Reminders</a></li>
+          	<li><a href="#priorities">Priorities</a></li>
+          	<li><a href="#resources">Resources</a></li>
+          	<li><a href="#goals">Goals</a></li>
+          	<li><a href="#supplements">Supplements</a></li>
+      	  </ul>
+        </div>
+      </div>
+      <!--  col-md-6 ToC   -->
+      <div class="col-md-offset-1 col-md-5">
+        <div class="form-group">
+          <ul class="content-list">
+          	<li><a href="#medications">Medications</a></li>
+          	<li><a href="#habits">Habits</a></li>
+          	<li><a href="#screenings">Screenings</a></li>
+          	<li><a href="#next-test">Next Test</a></li>
+      	  </ul>
+        </div>
+      </div>
+    </div>
+    <!--  End row   -->
+
+    <div class="row" id="intro">
+	<hr>
+      <div class="col-md-8">
+        <div class="form-group">
+          <select class="form-control" placeholder="" id="ptntMsg-1">
+            <option>Hello, [PatientName]. It was very nice to meet you today. I really enjoyed our conversation.</option>
+            <option>Hello, [PatientName]. It was very nice to meet you yesterday.</option>
+            <option>Hello, [PatientName]. I really enjoyed our conversation.</option>
+            <option>Hello, [PatientName]. It was nice to see you today.</option>
+            <option>Hello, [PatientName]. It was nice to see you yesterday.</option>
+          </select>
+          <br>
+		  <select class="form-control" placeholder="" id="ptntMsg-2">
+            <option>I recommend that we follow up on your progress the week of [DATE TO DATE+5].</option>
+            <option>I recommend that we follow up on your progress the week of [DATE TO DATE+5] and that you complete your next blood test the week before.</option>
+          </select>
+          <br>
+          <select class="form-control" placeholder="" id="ptntMsg-3" onchange="copy();">
+            <option>Schedule your next consult within 3 days and use this 10% discount code:</option>
+            <option>Use this Coupon Code for 00% off your next purchase - ABCD.</option>
+          </select>
+          <br>
+          <p>
+          <span id="PatientMessage-1"></span> <p id="PatientMessage-2"></p> <p id="PatientMessage-3"></p>
+      	  </p>
+		  
+		  <br>
+          <p>You currently have <input type="number" min="01" max="99" class="form-control" id="ptntMsg-4" onchange="copy();"></input> <span id="PatientMessage-4"></span> consults remaining of your package that expires on <b><input type="date" class="form-control" id="ptntMsg-5" onchange="copy();"><span id="PatientMessage-5"></span></b>
+          </p>
+
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+
+    <div class="row" id="reminders">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Reminders</h4>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="reminders-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="remindersOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+
+    <div class="row" id="priorities">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Priorities</h4>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="priorities-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="prioritiesOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div class="row" id="resources">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Resources</h4>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="resources-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="resourcesOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div class="row" id="goals">
+        <hr>
+      <div class="col-md-8">
+      	<h4>Goals</h4>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="goals-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="goalsOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+   
+    <div class="row" id="supplements">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Supplements</h4>
+      	<p><em>* Unless otherwise noted, continue these supplements until our next consultation date. Write the dosing on the bottle or consider getting a pill organizer.</em></p>
+      	<h5>Take upon waking on an empty stomach:</h5>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="supplements1-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="supplementsOut1"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+        <h5>Take with breakfast:</h5>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="supplements2-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="supplementsOut2"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+
+        <h5>Take with first meal of the day:</h5>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="supplements3-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="supplementsOut3"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+
+      <p> and so on and so forth for all the bullet points...</p>
+      <br>
+      Additional:
+      <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="supplements4-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="supplementsOut4"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+      </div>
+
+	 </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+ 
+    <div class="row" id="medications">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Medications</h4>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="medications-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="medicationsOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div class="row" id="habits">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Lifestyle Habits to Start</h4>
+        <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="habits-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="habitsOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+
+    <div class="row" id="screenings">
+      <hr>
+      <div class="col-md-8">
+      	<h4>Screenings</h4>
+        <div class="form-group">
+          Please review my Screening Exam Timeline to determine if you are current on all of your necessary tests and exams: <br>
+          <div class="ui-widget">
+            <input type="text" id="screenings-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="screeningsOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+
+    <div class="row" id="next-test">
+      <hr>
+      <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+          <h4>Next Blood Test</h4>
+          <p>To follow the progression of your health over time, as well as the progress made with your plan, it is important to regularly check-in on your health biomarkers.</p><br />
+          <h5>What we will monitor next:</h5>
+          <div class="form-group">
+          <div class="ui-widget">
+            <input type="text" id="biomarkers-tags" class="form-control" onchange="copy();">
+          </div>
+          <p id="biomOut"> </p>
+          <div class="btn-group">
+	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	  </div>
+        </div>
+       </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <div id="disclaimer" class="row hidden">
+      <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+          <hr>
+          <h5>DISCLAIMER</h5>
+          <p class="small">The information contained within this document is for informational purposes only. It is not a substitute for the advice from your primary care provider. Dr. Alexis Shields does not act in the capacity of a primary care physician for virtual clients and does not diagnose or prescribe. Please visit your doctor for all medical concerns and before making any changes to your diet and exercise regime, and before taking any dietary supplements.</p><br />
+        </div>
+      </div>
+      <!--  col-md-8   -->
+    </div>
+    <!--  row   -->
+    
+    <br />
+    
+    <div id="editor"></div>
+</form>
+  </div>
+  <div class="container" style="margin-bottom: 4em;">
+   <div class="row">
+    <div class="col-md-8">
+      <button class="btn btn-primary" style="background:#323232;margin-right:5px;padding:1em 4em" id="clean">Save</button> 
+      <button class="btn btn-secondary hidden" style="border:1px solid #323232;margin-right:20px;padding:1em 4em" id="cmd">Export as PDF</button> 
+    <button class="btn btn-primary hidden" style="padding:1em 4em;" id="export" onclick="Export2Doc('content');">Export to Word</button>
+    </div>
+   </div>
+</div>
+&nbsp;
+<div class="blockBtm"></div>
+
+</body>
+
+</html>
