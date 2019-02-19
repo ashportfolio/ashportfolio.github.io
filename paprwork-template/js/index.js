@@ -1,4 +1,41 @@
 $( function() {
+    var ptntNames = [
+      "John M Doe",
+      "Mary Jane Doe",
+      "Bear the Dog",
+      "Mr Testing Name",
+      "Patient 0"
+    ];
+    $( "#ptntName" ).autocomplete({
+      source: ptntNames
+    });
+
+    var messages1 = [
+      "It was very nice to meet you yesterday.",
+      "I really enjoyed our conversation.",
+      "It was nice to see you today.",
+      "It was nice to see you yesterday."
+    ];
+    $( "#ptntMsg-1" ).autocomplete({
+      source: messages1
+    });
+
+    var messages2 = [
+      "I recommend that we follow up on your progress the week of ",
+      "I recommend that we follow up on your progress the week of <br> and that you complete your next blood test the week before."
+    ];
+    $( "#ptntMsg-2" ).autocomplete({
+      source: messages2
+    });
+
+    var messages3 = [
+      "Schedule your next consult within 3 days and use this 10% discount code: ABCD",
+      "Use this Coupon Code for 00% off your next purchase - ABCD."
+    ];
+    $( "#ptntMsg-3" ).autocomplete({
+      source: messages3
+    });
+
     var remindersTags = [
       "Intake Form: Please <a href='#'>click here</a> to complete your online health assessment before our next consultation. This information is crucial to your success with this program."
     ];
@@ -108,6 +145,7 @@ $( function() {
 
 function copy() { 
 document.getElementById("PatientName").innerHTML=document.getElementById("ptntName").value,
+document.getElementById("PatientName2").innerHTML=document.getElementById("ptntName").value,
 document.getElementById("currentDate").innerHTML=document.getElementById("crrntDate").value,
 document.getElementById("PatientMessage-1").innerHTML=document.getElementById("ptntMsg-1").value,
 document.getElementById("PatientMessage-2").innerHTML=document.getElementById("ptntMsg-2").value,

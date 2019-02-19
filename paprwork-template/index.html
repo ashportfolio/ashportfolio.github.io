@@ -30,16 +30,15 @@
       <div class="col-md-6">
         <div class="form-group">
   			<h4>Recommendations for <span id="PatientName"> </span><br><br>
-	  			<div class="form-group">
-	          		<select class="form-control" id="ptntName" onchange="copy();">
-			           <option>Jane Doe</option>
-			           <option>John M Doe</option>
-			           <option>Mr Fakey</option>
-			           <option>Bear the Dog</option>
-			    	</select>
-		        </div>
+	        <div class="form-group">
+	          <div class="ui-widget">
+	            <input type="text" id="ptntName" class="form-control" onchange="copy();">
+	          </div>
   			</h4>
         </div>
+      	<div class="btn-group">
+	        <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	</div>
       </div>
       <!--  col-md-6   -->
       
@@ -58,11 +57,11 @@
       <div class="col-md-5">
         <div class="form-group">
           <ul class="content-list">
+          	<li><a href="#message">Message</a></li>
           	<li><a href="#reminders">Reminders</a></li>
           	<li><a href="#priorities">Priorities</a></li>
           	<li><a href="#resources">Resources</a></li>
           	<li><a href="#goals">Goals</a></li>
-          	<li><a href="#supplements">Supplements</a></li>
       	  </ul>
         </div>
       </div>
@@ -70,6 +69,7 @@
       <div class="col-md-offset-1 col-md-5">
         <div class="form-group">
           <ul class="content-list">
+          	<li><a href="#supplements">Supplements</a></li>
           	<li><a href="#medications">Medications</a></li>
           	<li><a href="#habits">Habits</a></li>
           	<li><a href="#screenings">Screenings</a></li>
@@ -80,40 +80,27 @@
     </div>
     <!--  End row   -->
 
-    <div class="row" id="intro">
+    <div class="row" id="message">
 	<hr>
       <div class="col-md-8">
-        <div class="form-group">
-          <select class="form-control" placeholder="" id="ptntMsg-1">
-            <option>Hello, [PatientName]. It was very nice to meet you today. I really enjoyed our conversation.</option>
-            <option>Hello, [PatientName]. It was very nice to meet you yesterday.</option>
-            <option>Hello, [PatientName]. I really enjoyed our conversation.</option>
-            <option>Hello, [PatientName]. It was nice to see you today.</option>
-            <option>Hello, [PatientName]. It was nice to see you yesterday.</option>
-          </select>
-          <br>
-		  <select class="form-control" placeholder="" id="ptntMsg-2">
-            <option>I recommend that we follow up on your progress the week of [DATE TO DATE+5].</option>
-            <option>I recommend that we follow up on your progress the week of [DATE TO DATE+5] and that you complete your next blood test the week before.</option>
-          </select>
-          <br>
-          <select class="form-control" placeholder="" id="ptntMsg-3" onchange="copy();">
-            <option>Schedule your next consult within 3 days and use this 10% discount code:</option>
-            <option>Use this Coupon Code for 00% off your next purchase - ABCD.</option>
-          </select>
-          <br>
-          <p>
-          <span id="PatientMessage-1"></span> <p id="PatientMessage-2"></p> <p id="PatientMessage-3"></p>
-      	  </p>
-		  
-		  <br>
-          <p>You currently have <input type="number" min="01" max="99" class="form-control" id="ptntMsg-4" onchange="copy();"></input> <span id="PatientMessage-4"></span> consults remaining of your package that expires on <b><input type="date" class="form-control" id="ptntMsg-5" onchange="copy();"><span id="PatientMessage-5"></span></b>
-          </p>
-
-          <div class="btn-group">
-	          <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
-      	  </div>
-        </div>
+      	<p>
+      	Hello, <span id="PatientName2"></span>
+      	<input type="text" class="form-control" id="ptntMsg-1" onchange="copy();">
+		<br>
+      	<input type="text" class="form-control" id="ptntMsg-2" onchange="copy();"><span> [DATE TO DATE+5].</span>
+      	<br><br>
+      	<input type="text" class="form-control" id="ptntMsg-3" onchange="copy();">
+		<span id="PatientMessage-1"></span> <p id="PatientMessage-2"></p> <p id="PatientMessage-3"></p>
+      	<div class="btn-group">
+	      <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	</div>
+      	</p>
+	    <br>
+        <p>You currently have <input type="number" min="01" max="99" class="form-control" id="ptntMsg-4" onchange="copy();"></input> <span id="PatientMessage-4"></span> consults remaining of your package that expires on <b><input type="date" class="form-control" id="ptntMsg-5" onchange="copy();"><span id="PatientMessage-5"></span></b>
+        </p>
+        <div class="btn-group">
+	      <a href="#" class="edit-btn">Duplicate</a> | <a href="#" class="edit-btn">Edit this answer</a>
+      	</div>
       </div>
       <!--  col-md-8   -->
     </div>
