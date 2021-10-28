@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+
+'The problem with the world is that the intelligent people are full of doubts, while the stupid ones are full of confidence.'
+
+Charles Bukowski
+
+-->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, user-scalable=0.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="generator" content="Mr 2%"/>
+<link href="css/web.css" type="text/css" rel="stylesheet"/>
+<title>Mister Two Percent</title>
+<script>
+
+// https://github.com/iamdustan/smoothscroll/blob/master/src/smoothscroll.js
+function smoothScroll(x) {
+var startTime = performance.now();
+var startX = document.body.scrollLeft;
+var startY = 0;
+
+// scroll
+smoothScrollStep({
+startTime: startTime,
+startX: startX || 0,
+startY: 0,
+x: x || 0,
+y: 0
+});
+}
+
+function ease(k) {
+//return 0.5 * (1 - Math.cos(Math.PI * k));
+//return 1-(--k)*k*k*k;
+//return k*k*k*k*k;
+return (-Math.pow( 2, -10 * k ) + 1 );
+}
+
+const SCROLL_TIME = 200;
+
+function smoothScrollStep(context) {
+let time = performance.now()
+let value;
+let currentX;
+let elapsed = (time - context.startTime) / SCROLL_TIME;
+
+// avoid elapsed times higher than one
+elapsed = elapsed > 1 ? 1 : elapsed;
+
+// apply easing to elapsed time
+value = ease(elapsed);
+
+currentX = context.startX + (context.x - context.startX) * value;
+
+// document.body.scrollTo(currentX, 0);
+document.body.scrollLeft = currentX;
+
+// keep scrolling if we have not reached our destination
+// this was > 1.0 and that wasn't working for some reason
+if (Math.abs(currentX - context.x) > 2.0) {
+requestAnimationFrame(smoothScrollStep.bind(window, context));
+} else {
+// other side of possible mobile optimizaton thing
+// document.body.style.backgroundColor = realColor;
+}
+}
+
+// snap scroll helper
+// inspired by:
+// https://github.com/jpamental/moby-dick/pull/5/commits/ec022061684ae4c233fba047fb341b41deeead6c
+
+function setupShadowPages() {
+// is this guaranteed to execute AFTER column layout occurs?
+// currently: i do not know
+
+let pageCount = Math.floor( bookElement.scrollWidth / window.innerWidth );
+
+pageCount += 10; // uhhh :)
+
+document.documentElement.style.setProperty("--page-count", pageCount);
+
+let shadowPageContainer = document.querySelector("div.shadow-page-container");
+
+for (let i = 0; i < pageCount; i++) {
+let shadowPage = document.createElement("div");
+shadowPage.innerHTML = " ";
+shadowPage.className = "shadow-page";
+shadowPageContainer.appendChild(shadowPage);
+}
+}
+
+function getComputed(propertyName) {
+return Number( getComputedStyle(bookElement)
+.getPropertyValue(propertyName)
+.replace("px", "") );
+}
+
+function turnPageForward() {
+turnPage(1);
+}
+
+function turnPageBack() {
+turnPage(-1);
+}
+
+function turnPage(turnDirection) {
+
+let currentLeftOffset = document.body.scrollLeft;
+
+let columnWidth = getComputed("column-width");
+let columnGap = getComputed("column-gap");
+let columnTotal = columnWidth + columnGap;
+
+// this was previously Math.floor which was causing problems when
+// paging backwards
+
+let closestPageNumber = Math.round( currentLeftOffset / columnTotal ) + turnDirection;
+
+writePageNumber(closestPageNumber);
+
+let closestPageEdge = closestPageNumber * columnTotal;
+
+// aha, but what if we are already AT that page?
+// 8.0 pixels is a bit of a "magic number"...
+if ( Math.abs( closestPageEdge - currentLeftOffset) < 8.0 ) {
+closestPageEdge += columnTotal * turnDirection;
+writePageNumber( closestPageNumber + 1 ); // hacky
+}
+
+// there's got to be a better way to do this...
+if ( (turnDirection > 0) &&
+( endElement.getBoundingClientRect().x < window.innerWidth )
+) {
+
+return;
+}
+
+// if we're turning a page, we are navigating away from a chapter title,
+// so we want to clear this out
+window.location.hash = "";
+
+smoothScroll(closestPageEdge);
+}
+
+function turnToPage(pageNumber) {
+let columnWidth = getComputed("column-width");
+let columnGap = getComputed("column-gap");
+let columnTotal = columnWidth + columnGap;
+
+let pageEdge = pageNumber * columnTotal;
+
+writePageNumber(pageNumber);
+
+// the cute tiny bookmark
+let bookmarkElement = document.querySelector("div#bookmark");
+bookmarkElement.style.display = "block";
+// bookmarkElement.style.top = `0px`;
+bookmarkElement.style.left = `${pageEdge + columnWidth / 2.0}px`;
+console.log(bookmarkElement.style.left);
+
+document.body.scrollLeft = pageEdge;
+}
+
+function turnToAnchor(anchor) {
+let editedAnchor = "chapter_" + anchor.replace( "#", "" );
+
+let anchoredHeading = Array.from( document.querySelectorAll("h2") )
+.find( heading => {
+return heading.getAttribute("id") == editedAnchor;
+} );
+
+anchoredHeading.scrollIntoViewIfNeeded();
+
+let wherePageEdgeShouldBe = ( window.innerWidth - bookElement.getBoundingClientRect().width ) / 2.0;
+let offset = anchoredHeading.getBoundingClientRect().x - wherePageEdgeShouldBe;
+
+document.body.scrollLeft += offset;
+}
+
+function setTextScale(scale) {
+document.documentElement.style.setProperty( "--font-size", `${baseFontSize * scale}px` );
+}
+
+function toggleNav() {
+if ( navElement.className == "invisible" ) {
+navElement.className = "visible";
+} else {
+navElement.className = "invisible";
+}
+}
+
+function writePageNumber(pageNumber) {
+window.localStorage.setItem( "pageNumber", pageNumber );
+}
+
+function readPageNumber() {
+let pageNumber = Number( window.localStorage.getItem("pageNumber") );
+if ( pageNumber > 1 ) {
+console.log(`turning to page ${pageNumber}`)
+turnToPage(pageNumber); // i'm not TOTALLY sure why i need the +1... oh well
+}
+}
+
+var bookElement;
+var navElement;
+var endElement;
+var baseFontSize = 18.0;
+var lastMouseDown = Date.now();
+var lastClick = Date.now();
+
+document.addEventListener("DOMContentLoaded", e => {
+
+bookElement = document.querySelector("div.book");
+navElement = document.querySelector("nav");
+endElement = document.querySelector("p.last-page")
+
+if (window.innerWidth < 640) {
+setupShadowPages();
+}
+
+if (window.location.hash.length > 1) { // > 1, because an empty "#" is length 1
+turnToAnchor( window.location.hash )
+} else {
+readPageNumber();
+}
+
+// toc button
+
+document.querySelector("#toc-button").addEventListener("click", e => {
+toggleNav();
+e.stopPropagation();
+});
+
+// toc text size buttons
+
+document.querySelectorAll("nav div.controls button").forEach(button => {
+let size = `${baseFontSize * button.dataset.scale}px`;
+button.style.fontSize = size;
+
+button.addEventListener("click", e => {
+setTextScale(e.target.dataset.scale);
+e.stopPropagation();
+});
+});
+
+// might delete this later, b/c it is possibly ridiculous:
+// updating the buttons to reflect the "real" base font size
+
+setTimeout( function(){
+let realFontSize = Number( getComputedStyle(document.documentElement)
+.getPropertyValue("font-size")
+.replace("px", "") );
+console.log(`real font size detected: ${realFontSize}px`);
+
+document.querySelectorAll("nav div.controls button").forEach(button => {
+let size = `${realFontSize * button.dataset.scale}px`;
+button.style.fontSize = size;
+
+button.addEventListener("click", e => {
+setTextScale(e.target.dataset.scale);
+e.stopPropagation();
+});
+});
+}, 1000);
+
+// toc chapter links
+
+document.querySelectorAll("nav a").forEach(link => {
+
+link.addEventListener("click", e => {
+toggleNav();
+turnToAnchor( e.target.getAttribute("href") )
+e.stopPropagation();
+});
+});
+
+});
+
+document.addEventListener("keydown", e => {
+if (event.keyCode === 37) { // left
+turnPageBack();
+}
+if ( (event.keyCode === 39) || (event.keyCode === 32) ) { // right, space
+turnPageForward();
+}
+});
+
+document.addEventListener("wheel", e => {
+
+if (navElement.className == "visible") {
+return;
+}
+
+if ( Math.abs(e.deltaY) > Math.abs(e.deltaX) ) {
+e.preventDefault();
+document.body.scrollLeft += e.deltaY;
+}
+}, { passive: false });
+
+document.addEventListener("mousedown", function(e) {
+lastMouseDown = Date.now();
+});
+
+// values in millis
+const CLICK_DEBOUNCE_TIME = 50;
+const LONG_PRESS_TIME = 250;
+
+document.addEventListener("click", function(e) {
+
+let now = Date.now();
+
+// don't advance on long press (text selection?)
+if ( (now - lastMouseDown) > LONG_PRESS_TIME ) {
+return;
+}
+
+// don't advance on double-click
+if ( (now - lastClick) < CLICK_DEBOUNCE_TIME ) {
+return;
+}
+
+lastClick = now;
+
+// don't advance on link click
+if (e.target.tagName == "A") {
+return;
+}
+
+// don't advance if we are selecting text
+if ( window.getSelection().toString().length > 0 ) {
+return;
+}
+
+if ( e.clientX < (window.innerWidth / 3.0) ) {
+turnPageBack();
+} else {
+turnPageForward();
+}
+});
+
+// hash change detector
+// note: it's a window event, not a document event
+
+window.addEventListener("hashchange", e => {
+if (window.location.hash.length > 1) {
+turnToAnchor( window.location.hash )
+}
+});
+
+</script>
+</head>
+<body>
+<nav class="invisible">
+<div class="controls">
+<button data-scale="0.8">A</button>
+<button data-scale="1.0">A</button>
+<button data-scale="1.2">A</button>
+<button data-scale="1.4">A</button>
+<button data-scale="2.0">A</button>
+</div>
+<div class="toc">
+<h1>Table of Contents</h1>
+<ol><li><a href="#opening">Opening</a></li><li><a href="#chapter-1">Chapter 1</a></li><li><a href="#chapter-2">Chapter 2</a></li><li><a href="#chapter-3">Chapter 3</a></li><li><a href="#colophon">Colophon</a></li></ol>
+</div>
+</nav>
+<!--- TEMP REMOVAL
+<div class="print-cover">
+<div class="title"><h1><span>Mister Two Percent</span></h1><h2>A. A.</h2></div>
+</div>
+-->
+<div class="book">
+
+<!--- TEMP REMOVAL
+<img class="cover" src="img/mr2pc-cover-web.png"/>
+-->
+<div class="title"><h1><span>Mister Two Percent</span></h1><small>Ashwin Anandani</small></div>
+
+<h2 id="opening">
+</h2>
+<p>"They say there's a man who takes care of these kinds of things for them. If it's been stolen, he'll be one of the few people to lay eyes on it before it can be used as collateral."</p>
+<p>The superior officer appeared stunned.</p>
+<p>"One man? Verifying all the stolen art that trades on the world's black market? It's not possible, one man couldn't know so much, let alone be so trusted," he scoffed.</p>
+<p>His partner opened the manila folder he was carrying and took out a series of clippings. What little New Scotland Yard knew of the man was in there. Indeed, they were barely even sure he was a man. It was a guess, provided by a junior inspector who noted that a group of people as socially-backward as the criminal underworld would never trust a woman with their technology.</p>
+<p>"He's a lone wolf, with quite a reputation I might add. Private contractor in tech security for the criminal underworld. We've been tracking his code signatures for the last five years."</p>
+<p>The detective pinned a series of code clippings along the side of the whiteboard as he explained further, "From what we gather, he's now running cybersecurity for at least half of the largest organized crime syndicates in the developed world."</p>
+<p>"Explains why they don't kill him," the superior officer said as he took a seat. "And why our trail's gone cold. But how does one man verify such an immense volume of artwork? Who holds that kind of knowledge in the criminal underworld?"</p>
+<p>"Our sources have insinuated that he has some kind of technology to do this. Beyond what even the richest in the legitimate art market could get their hands on - the gold standard of the black market, so to speak."</p>
+<p>"Tech? These bloody 21st-century criminals. However, that means that for the painting to have any value from now on, at some point it will need to cross paths with him?"</p>
+<p>"It would appear that way, sir," the detective responded carefully, studying the final clues of the man's whereabouts with a confused expression.</p>
+<p>His superior thought for a moment. "Right, then we find any trace of his whereabouts and follow them up to find the painting," he finished with confidence.</p>
+<p>"Now, what else do we have on this guy?"</p>
+<p>"That's just the problem, sir - nothing," The detective turned to him, dejected.</p>
+<p>"They refer to him only as <em>Mr Two-Percent</em>."</p>
+
+<h1 id="chapter-1">Chapter 1</h1>
+<h2>The Sandbox Gig</h2>
+
+<em>Dubai, UAE. 4:52pm.</em>
+<div style="height:2rem;"></div>
+<p>Art has tremendous value among the criminal community, both for its capability of storing the value of laundered money and its usage as a status symbol. From long-treasured colonial artifacts or classical Dutch paintings, the world of money launderers can't seem to get enough of it.</p>
+<p>But therein lies the mechanics of the system - for something to have value, one has to authenticate its origin. Otherwise, it's of no use to the collector nor the money launderer, now is it? Or, one might be victim to a high-fidelity copy sold to multiple buyers. For a $50 million dollar piece, the black market would scarcely give it $10 million in redeemable value - but that $10 mil would be available in an actual bank account. So naturally there's a business there, a business that relies on information asymmetry to squeeze out value.</p>
+<p>And with the recent increase in Nigerian BEC scams and other "InstaLaunderers", that business has begun picking up in the homebase of 3rd-world crime: the Middle East.</p>
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+<h2></h2>
+<p>I always hated this god-damned heat, Solomon thought to himself upon landing at Dubai International Airport. As with most buildings in this desert city, the airport stood characterless, a mirage of glass and steel. The skyline glinted dimly in the desert sun, specked by phallic busts of glass and steel erected in the taste of European contractors who've built over the nation's bygone Bedouin past. It reminded Solomon of what the UAE did best: spend absurd amounts of money on tacky things to wash money - and if he's lucky, he may just get to get in on his two percent of that. In just about twelve hours, he'd be back in this very spot several thousand dollars richer, boarding a plane for anywhere out of this glorified sandbox.</p>
+<p>While not ideal for Solomon's taste, or indeed for his own security, travel to this part of the world was now a necessary evil of his work. He was dressed for the likes of Asian cities with only the two seasons of Summer and Less Summer. Having grown up in such climates, his naturally olive skin shone under a gentle cream linen button-down while his slim figure was accentuated by fitted navy trousers. In his profession, shoes were a sign of self-care, and so he had carefully selected a pair of nondescript lightweight suede boots in grey with earthy accents. Carrying only a coffee-brown briefcase, he made his way to the taxi stand and blended into the line among a group of Italians.</p>
+<p>Out of all the cities he'd worked in, Sol found Dubai to be among the most unbearable. Between the archaic laws and the even more archaic closed-mindedness of its inhabitants, this was quickly a place Sol found hard to do business in. Too much flash, too much pomp and circumstance all about buldings in a desert. He preferred the simple purity of the European cities he called home. Places that were true, honest - <em>authentic</em>. It is this which defined his own character. Authenticity; if done right it has a roughness about it, something that remains wild inside.</p>
+<p>It was perhaps this drive for authenticity and roughness that ultimately brought Sol to the gates of the art world. Despite all his time in tech, he could never bring himself to kowtow to a mainstream public that is so omnipotent in such a hype-driven industry. Instead, Sol craved the silent work of technical craftsmen and criminalised anarchist figures. It was a friend that falls into the latter category who started it all, in fact.</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<p>"You know what I want to become?" Nick asked me during one of our late night conversations that always turned into plans for world domination.</p>
+<p>We were just two overambitious college students late into a night filled with a level of alcohol appropriate for Nick's Russian-Jewish heritage, talking about how we were going to use our brains to become rich. Not just regular rich, but to have what we endearingly titled Fuck You Money - so much money that you could say "fuck you" to anybody and get away with it.</p>
+<p>"I do know. You want to become the market-leading gay male companion for Russian oligarchs," I said with a wicked smile, taunting him as always.</p>
+<p>"Oh shut the fuck up. No - that's what you can become for some sodomous Arab sheikh if you like - but I'm too smart for that shit," he replied, always sure to get a jab in both back at me and at the Arab community. "What I want," he said with his finger out as a signal of something grand to come, " is to become the industry's Two Percent Guy."</p>
+<p>"What, like a dirty finance type?" I laughed him off, still somewhat taking the piss. We had cultivated a specific type of relationship over many nights on this cold terrace in a small town just north of Chicago. We had a machoistic sort of alpha-challenging dynamic, but between us lay a mutual respect for each other's intellect, and for each other's discipline. His: politics, and mine: technology. It was the basis of our relationship to challenge each other intellectually, each aiming to be his version of a 'Man of the World'.</p>
+<p>In truth, we probably came off as a pair of Nerd Bros most of the time.</p>
+<p>"Funny, mister code-for-brains. Listen - you know when all those big deals go down between Halliburton and the US government? Or those multimillion dollar contracts for private security companies? Who do you think arranges that shit?" Nick was obsessed with the oil and gas industry's wealth. I despised the industry and made a face to remind him of said fact as my response.</p>
+<p>"<em>Somebody</em> does. And that somebody takes something small, like a two percent cut. That's it. Just two percent. But you connect a few deals of that size a year and… now that's how you get Fuck You Money," he replied while scrunching his fat nose and pulling his know-it-all face at me.</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<p>While Sol made his way over to the Fairmont Hotel on Dubai's main drag, the art world was up in arms about the latest theft of a Van Gogh painting from its museum in Cairo. The piece went by a few names, but was most colourfully known as Poppy Flowers. At a valuation of nearly fifty million dollars, it was worth about a tenth of that in credit on the black market. That is, of course, assuming you can get around the intense amount of heat on the piece following such a grandiose theft.</p>
+
+<p>The best time to get rid of a painting is, in fact, right after you've taken it. And that, Solomon assumes, is why he's here. The painting is right here in Dubai, home to one of the world's busiest ports and the black market's key trading ground.</p>
+
+<p>In the tech world, art is a relative newcomer. But not for Solomon. Taken by the wit and talent of René Magritte from an early age, artists became a private obsession for Sol. Where most programmers would use TV shows for databases, he'd use art collections. Where his colleagues were enamoured with elements of game design, he enjoyed watching the craft of restoration. And as the industry around him obsessed over efficiencies and user growth, his creative outlets increased as a way to cope with the analytical nature of technology. Art, sculptures and music instead brought life, love and meaning to the rigid nature of his talents. But this divergence grew over time, and love would not pay the bills. And so, it was software in the end that took over his life, much like the way it has taken over society.</p>
+
+<p>One night while up late rummaging through the internet as if it were a cabinet of curiousities, Sol discovered a piece of advice from a particular professional he admired from a distance. Despite having contributed to basically all the key technologies of the time, the mysterious programmer himself was a lone wolf who kept out of the mainstream eyes. The nature of his enigma quickly captured Solomon, who followed his wisdowm wherever it could be found. Of the many things learned, one in particular wrinkled Solomon's brain from the moment he read it:</p>
+
+<p><em>Successful programming is built on two key concepts: abstraction and encapsulation. That is to say, for any data set or variable, we want to first make it as abstract as possible, such that it will apply to the broadest of possibilities. Next, it will be most efficient to encapsulate our data or function in a modular way, such that it can be easily manipulated and used repeatedly.</em></p>
+
+<p>And just like that, this unnamed professional had left here a single note of wisdom that would come to change Sol's life.</p>
+
+<p>Abstraction and encapsulation. Simple and elegant. All the logic one really needed.</p>
+
+<p>You see, if you want to train a program to hear a song and then identify it, this is easily done using the same two steps. First, you must classify the songs only in terms of their abstract components - tempo, pitch, instruments, and so on. Second, you categorise those compontents and simply identify the patterns in a range of songs. In essence, you break the song into abstract parts and then you wrap that all up together as a way to identify patterns. Abstraction and encapsulation, nicely managed by Shazam in this example.</p>
+
+<p>Solomon, however, took this a step further. If you can train a program to hear a song and an algorithm to recognise a face, why not a camera to recognise aspects of a painting? All great artists, like great developers, left signatures - details inside or about the artwork that are too unique to replicate.</p>
+
+<p>Naturally, with no hype around art verification in the tech world, such an idea traveled through deaf ears. Not to mention it would put a fair number of well-educated professionals out of business virtually overnight - if it really worked. Ever curious about this proposition, Solomon put a few nights of work in and quickly found himself with a working prototype.</p>
+
+<p>He began with easily-encapsulable elements like stroke count and direction to analyse their match to the master copy (built from a collection of hacked museum databases). After a few sleepless nights, the killer feature was built: an in-built light radar that could calculate a significantly accurate date for the pigments used.</p>
+
+<p>Solomon kept the application and its code to himself, ever cognizant that the tech world was a wicked one of thieves and copycats. He soon realised, however, that it would bring him no joy entirely locked up either. He ached to know if it would work on a real painting. And so it came time for a test.</p>
+
+<p>He used it first on the iconic Son of Man at the Art Institute of Chicago during his time there seeing old friends. After a few bugs had been fixed, Sol got clean scans and detailed results from a set of mixed media pieces on display at the Hong Kong Museum of Art. Before long he was tweaking it, improving it and adding features to identify sculptures, vases, busts, even antique artifacts.</p>
+
+<p>Finally, in the early 2000s Sol had a chance to stop off in Manhattan on work and found Henri Rousseau's The Sleeping Gypsy was on display at MoMA temporarily. Small pricks of excitement took over the back of his neck as he thought of the opportunity to use his technology on it.</p>
+
+<p>The palette and backdrop are Dali-esque, but the piece is overtly simple. The paint strokes that make the full moon are easily distinguishable and the woman's form tweaks the entire perspective with its (dis)proportions. While a stunning piece on its own, the story is what always drew Sol to it - Rousseau was an outsider, a self-taught artist who was selling his works as canvases to be painted over when his talent was discovered. An artist of his own heart; humble and therefore humbling.</p>
+
+<p>The piece would be at MoMA this time of year for barely another month before being on loan elsewhere. By this time, the vague borderline criminality of what Sol was doing itself had become a draw for him - he simply couldn't resist proving his prototype in such a high-profile museum.</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<p>The bitter cold of an early November morning coarsed through Solomon's lungs as he walked the base level of the cramped Manhattan skyline. Thick, cottony cloud cover made the world around him grey from floor to ceiling, broken up every so often by bright yellow cabs floating in and out of view. The streets were lined like the sides of an ashtray, dirty with leftovers, leaves and cigarettes. The smell of concrete and glass wrapped in plastic straws with fries clogged up his nostrils. As Solomon crossed under a labyrinth of construction awnings, he was reminded that this dirt, hustle and energy is exactly why he loves cities.</p>
+<p>This mystery of foggy drainpipes and grey surroundings contrasted by bright signs and briney smells, it's like a hum and buzz cocooning you into the world with everyone else. This is my kind of jungle, Solomon thought to himself.</p>
+<p>He turned up Seventh Avenue and the Museum of Modern Art came into view, its soft lights giving off the glow of a library through the misty night. As he had on multiple occasions prior, Sol walked through with his advance ticket and made his way through the foyer to the stairs. Despite all his time in museums, Sol rarely liked what had been done with their interiors. Paintings, in his view, weren't made to be seen in large walled cubes in lighting better suited for the dentist's office. Context was everything, and yet museums had made context almost nothing (except for the Isabella Gardner Museum, that is).</p>
+<p>As he admired the brushstrokes of the moon above Rousseau's sleeping gypsy, Solomon rehearsed what he would say if ever caught scanning a painting. In essence, there wasn't anything illegal about taking a picture of an artwork. Looking like a stupid tourist, while strictly legal, is the only true crime committed. After a recent run-in with authorities at a museum in Rotterdam about what exactly he was doing, the app had been disguised to appear as just another pointless camera filter app. Harmless enough to be an alibi, but 'exciting' enough to be excusable. Nonetheless, being a brown man sporting a light beard and Mediterranean tan, it may be best if he wasn't seen scanning a multi-million dollar artwork using an $800 phone running software that looks like something out of the CIA.</p>
+<p>Solomon waited for the guard to pass his corner and manage to check the piece fairly discreetly. An attractive red-haired woman seemed to catch him from the corner of her eye, but he couldn't be sure. She didn't seem the type to tell, but he figured it might be best to pull a runner before anyone got too curious.</p>
+<p>Solomon made for a quick exit and lit up a cigarette as soon as he came out the museum doors. It helped to relax him instantly. He particularly loved to smoke in cold, grey cities. Something about the way the smoke mixed with the water vapor and floated in the air gave everything a cerebral feeling. With his heartrate now back to normal, Sol made his way along the avenue towards a public space with a set of gradiated stars and a view to the rest of the city. Looming over the constant trickle of people en route elsewhere, he sat quietly and observed the scene with his hands warm in the pockets of his ash-grey wool coat.</p>
+<p>As he looked out along the street, he caught sight of the same red-haired woman now walking along the avenue in the distance. She was also dressed in the subdued grey-heavy palette common at this time of year, accented quietly by the fiery streaks of metallic red hair that fell to the nape of her neck. With each step she seemed to be walking closer in his direction. As her face finally came into view he noted that, while not unattractive, she had a severity to her expression that reminded him of a hardened back alley cat.</p>
+<p>Maintaining her elegance and the severity of her glance, she walked up the steps and sat right next to Solomon. After a moment, and with a kind smile now in place, she turned to him and asked for a cigarette.</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<h2></h2>
+
+<p>The Fairmont Hotel Dubai is a fairly lackluster building as far as Dubai hotels go. No fancy gold lining or ornate entrances, a convenient location and a warm lounge entrance. Large swathes of rich brown leather adorned the space, twisting themselves into independent circular cubicles. Various cubicles were occupied; some with lone travelers half asleep, others with crying children meandering around bothering seated parents.</p>
+<p>On a plush couch along the back wall sat a nondescript figure deep in concentration. A glass with the slightest thimble of whisky and an outsized rock of ice sat near a cork-bound notebook, both lit by the dim light of a laptop screen. He seemed a man of some wealth and yet would blend into a dive bar just as well. In fact, he was a man who could have come from almost any ethnic background. The lone wolf, Solomon had his laptop open running cross-checks on the necessary software for the job.</p>
+<p>All systems go, he thought to himself. Somehow, he still felt anxious. Contract jobs like this leave their parties in a grey area of society. Sol embraced this grayness. It was one reason for his surival rate in an otherwise high body-count industry. While on a job, a contractor is simply that: a man with a contract to fulfill. And once that is fulfilled, no strings stay attached and the contractor floats back into the abyss until he's needed again.</p>
+<p>Therefore, trust is a central factor. Without trust, either party could be left high and dry with no routes of compensation. Besides the violent ones. It's this lack of trust that now bothered Solomon. Either owing to his background or the true scent of impending chaos in the air, Sol felt a bit like a man walking into a trap.</p>
+<p>Get in, get out. That's the plan. There's no reason for anything to go wrong. But Mia was right, there's no good reason to trust these pigs besides the money. The money that leads to the plan. Still, if Mia has a bad feeling about this, Solomon wouldn't rest easy.</p>
+<p>Often, it is the lone wolves who are most misunderstood, the cause of some legend that now leaves them thought of as dangerous. But a smart lone wolf is never truly lone, she is one who understands the value of a pack when the time comes. Where there is success alone, there is still solidarity with the pack. Where there is danger alone, there can be safety in a well-selected pack.</p>
+<p>Mia isn't someone Solomon takes lightly. She's fierce yet gentle and retains the cunning nature of a fox. Where Sol could be an enigma in the eyes of society, Mia could be a veritable disappearing act. And most importantly: he knows she's smarter than he is. She had eyes and ears everywhere, including on this very moment, he wagered.</p>
+<p>Solomon was about to take a sip of his drink when two overweight Arab men with noses the size of fists came into view. They both wore black suits over black shirts with black ties and black shoes. They had a familiar stink. A stink of those who only use dirty money. Who only keep dirty hands no matter how clean. He didn't need to see their hands though, he could see it in their faces. These two jokers were almost definitely his rendezvous.</p>
+<p>"Classic goon-wear. I do wish I packed each of them a pink handkerchief for those pockets," Solomon mused under his breath as he closed his laptop and packed up.</p>
+<p>Typically, the client will engage Mr Two Percent to verify a reently-stolen artwork so he can assess its value for the market. If the piece is verified, Mr 2% issues a non-fungible token; something which cannot be duplicated, duped, or doubled and is only valid for the holder it is issued to. That token provides the client with the sole right to its value on the black market. It also automatically releases a payment of 2% of its assessed value directly to an unmarked account.</p>
+<p>All the pieces were now in place, it was only the verification that remained. An on-site visit that put both client and vendor at the highest risk.</p>
+<p>In most engagements, things are amicable and proceed without a hitch. Sometimes there is a debate about its value, something Sol has prepared enough data to squash. And every once in a while, things become violent. But that's not often, and Sol was going to make damn sure it wasn't this time.</p>
+<p>The pair of suits came within two metres of Sol and gestured him to follow them. Solomon took one last swig, smoothed the creased linen on his shirt, and followed the men, one still waddling along as if held by a wedgie.</p>
+<p>The two big black M&Ms led Sol out of the Fairmont and into a white Range Rover awaiting their arrival. Solomon distracted himself with thoughts of why these two black-market black-clad men would choose to suddently invert their choice of colour. Sol's mother had once told him that in the Middle Eastern heat, the easiest way to prevent an overheating car is to buy it in white. Perhaps that was why. Sol buckled in the back seat behind the goons and turned his phone to airplane mode as instructed. With barely a word further and the A/C cooling the car to the mid-teens, the SUV pulled out of the Fairmont and headed straight for Dubai Ports World.</p>
+<p>DP World is a massive conglomerate with operations all over the world, but it all began here. The Silk Road of stolen silk, the crossroads of every plundered crown jewel, and a mecca of modern civilisation's logistical knowledge. The seaport itself lay on Dubai's coastline, just shy of the lesser known manmade islands, The Palm Jebel Ali.</p>
+<p>It was a short drive from the hotel along a highway clustered by odd-shaped buildings, each slice of space between them revealing the desert that lay just beyond. Luxury cars of every model and customisation possible sped past Solomon as he looked out the windows onto Sheikh Zayed Road. This road has gone through multiple names in its historic past, but throughout one name has stuck: the Road of Death, owing to its extraordinarily high rate of horrific accidents. Not a good omen, thought Solomon.</p>
+<p>The growth of this awkward skyline in the desert was fueled by years of so-called black money finding its way into property to be 'washed'. Recently-minted millionaires from West Africa were known to arrive at property development offices wearing traditional gharb and carrying suitcases of USD. They'd drop the money off, buy a few floors in the latest development project, and walk off. They'd then come back a year later and sell it off to the next one, regardless of how much the price increased or decreased, and be done with it. Money cleaned by glass and steel fueled by the blood of South Asian workers.</p>
+<p>Solomon studied the early evening sunset glinting off the buildings, trying desperately to keep his composure as the SUV raced along the blood-stained asphalt below them. He reminded himself: for the vendor, only the moment after verification would be the one of highest risk. Until then, the best Solomon could do would be to plan how to escape and keep his guard up.</p>
+<p>The road to the seaport would be lined with multiple checkpoints, each of which would require a clearance from the client. After the last checkpoint, Sol would be on his own with low-quality reception and no way out except through a black sea thick with oil. To make matters more complicated, being this close to the sea itself meant reception was poor.</p>
+<p>As the Range Rover came into view of each entry point, its license plate of simply "5" carrying with it that weight in tonnes, barriers to entry seemed to melt in succession. At each post, a bored 30-something man in a thobe waved them on from the guardbox as they glided past. Things semed to be moving smoothly so far, Solomon thought, except that he held the distinct feeling that somehow they were also being followed.</p>
+<p>After some six repetitions of various stone-grey MAERSK stacks, the Range Rover pulled up beside a large burnt orange container and the men got out. While the seaport is generally very well lit, the light nearest this container was, quite conveniently, burnt out. The shadows of the mens' noses were outsized so as to make it appear as if they were carrying guns in their mouths. With neither making a gesture to open the door, Solomon grabbed his suitcase and made his way out to them.</p>
+<p>Wedgie Goon turned to face Solomon and finally spoke. "We take you inside. You do, you come outside. Finish. OK?", he said, sounding also as if he truly had a difficult wedgie.</p>
+<p>"You have the topsheet?" Solomon asked in reply, typically stern and businesslike.</p>
+<p>The man handed Solomon a seemingly-blank sheet of paper, about the size of a single square of toilet paper and slightly discoloured. Sol took out his ultraviolet scanner and used it to decode the paper's text, confirming that it was indeed Poppy Flowers he had been summoned for. But in addition, there were two lesser-known pieces - certainly not artwork that he was aware had been stolen. He checked the other information before lighting the paper on fire and nodding to the men to lead the way.</p>
+<p>Solomon's eyes had just adjusted to the dimly-lit surroundings as they turned toward the entrance of the larger container. Inside, there were palettes of goods stacked at odd angles throughout the long rectangular space. The air was colder inside, and the sound of their footsteps reverberated deeply. In the far right corner, there was a dimly-lit area. Solomon made his way towards light and realised this was where the goods were discreetly stacked, as if simply discarded by a moving company.</p>
+<p>"The goods" are a triplet of recently-stolen Van Gogh paintings. The original crook had done himself a favour and covered the overall value of the sale - Poppy Flowers had been listed as stolen (rightly so) from a museum in Cairo, but the caretakers of the two additional stolen pieces were as of yet unaware of the additional losses. Poppy Flowers, while tiny, would still catch near $48MM on the market, and the pair of unknowns would be far more valuable given their MIA status. Solomon continued to find it beyond belief that a man with mental health problems from the 19th century could paint perfectly normal varieties of flowers that are now each worth the cost of a luxury apartment.</p>
+<p>With each verification, Sol's stomach tightened further. Finally, with all three verified cleanly, he discreetly turned off his phone's airplane mode setting while he resealed his suitcase. He gave the goons the all-clear and made his way out of the strewn mess of goods, trying conspicuously to note anything of potential use.</p>
+<p>With the job done, Sol knew there wouldn't be time for pleasantries and the safest way to get out would be to go separate ways. He began to distance himself from the goons, until finally he stood metres from the car, unsure what to do next. They motioned for him to get in, shouting out that they'll take him back to the hotel as a courtesy. Looking around at the dark and empty surroundings, Sol saw little choice but to get back into the vehicle with them.</p>
+<p>Silent Goon sat calmly in the front seat and Wedgie this time, oddly, decided to cozy up to Sol in the backseat. With both exits now covered, he realized now that he had indeed walked into a trap.</p>
+<p>Solomon's hands had barely begun to reach for his phone as the vague medically-sweet scent of chloroform and strong acrid stench of nicotine-stained fingers assaulted his senses. Full, thick wads of damp cotton now muffled his voice as he found himself slowly falling into the dark comfort of the humid air around him. A gentle haze accompanied the slow dimming of all of Solomon's senses until it was just him and the dark men in dark suits in a dark place.</p>
+
+<p>And then, there was only darkness.</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<h2></h2>
+
+<p>"Mmm, thank you," she said as I passed her a lighter. "Americans don't take kindly to smokers."</p>
+<p>"They prefer to kill themselves with prescription drugs instead," I replied, holding the banter out of a curiousity to uncover why she had followed me.</p>
+<p>She smiled. We remained quiet, two foreigners sitting on a step in a city built by immigrants.</p>
+<p>"It's powerful, isn't it?" she remarked to me.</p>
+<p>"Yes, there's an energy in cities I seem to feel at home in," I replied, assuming her meaning was the same as my own.</p>
+<p>"Quite," she paused. "And that tech you're hiding at MoMA isn't exactly something to underestimate either," she said, still looking forward while I turned to her slightly in shock.</p>
+<p>"Yes, I know what you've got running on there."</p>
+<p>My defenses kicked in. Out of context, no one would ever guess what my technology was, and beyond certain elements of the code base coming from a public repository, there were less than a handful of people who even knew of its existence. I couldn't figure out if she was part of some kind of art authority or just a woman trying an ill-timed flirt.</p>
+<p>"I'm not here to fund your startup or whatever it is you plan on doing with it, if that's what you're thinking. I see value, I bring it to my clients. Simple."</p>
+<p>"And who might these clients be?" I thought out loud.</p>
+<p>"That's not of your concern… yet. Tell me, how accurate is that thing?" She smiled again, keeping her cool and playing off the question.</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<h2></h2>
+
+<p>Behind every great man, there is always a woman, someone had once said. And sometimes that means the man takes the bullet first, Sol had always remarked.</p>
+<p>Yet again, things had gone sour. Sol's head pounded with the fog of half-dreams and his body ached as if he had been wading through water for hours. The cavernous rips of a speedboat motor began to fill his eardrums, and he realised his jaw was shivering. It was also becoming increasingly obvious that he was no longer on solid ground.</p>
+<p>"Where the fuck are we?" he shouted at Mia through sprays of warm saltwater that soaked his lips.</p>
+<p>She barely moves, responding simply with, "On a boat."
+Realising now that he was collapsed in a speedboat with Mia holding him in place with one hand while holding a rudder in the other, Sol forced himself into greater consciousness. He sat up slowly and looked around. The seaport's lights shrank away in the distance.</p>
+<p>She turned quickly to him and asked, "We'll be on Kush Island in half an hour, sit tight and keep guard behind us."</p>
+<p>"I take it that Kush Island is not a place where we will get to smoke kush," Sol replied dryly to himself.</p>
+<p>Solomon looked up. Night had fallen in earnest and small sets of stars were beginning to shine through the grey-violet hue of Middle Eastern sunsets. His shirt was no longer cream, and instead looked like it came out of an H&M-Jackson Pollock collaboration. He was soaked to the core and vaguely remembered falling into this souped-up fisherman's boat as he ran off the port, but his brain couldn't seem to decide what was dream and what was reality yet.</p>
+<p>"No, Sol, it's not. Kush Island is part of Iran, I had to literally drag your ass out of their hands and this was the fastest way off of Emirati soil. I thought we agreed that we can't trust cultures that don't respect women's rights?" Mia was clearly not happy about the rescue operation.</p>
+<p>"I was there to rip them off, not to trust them," Solomon replies, finally managing the energy to stand next to her. "Do we have everything, or is this <em>that</em> kind of evac?"</p>
+<p>"Well, Sol, luckily you've got women who trust you. Everything's secure, including you, but no standing for you just yet - you've had a horse's worth of drugs in the last twenty minutes. We will arrive in fifteen minutes, just sit down and don't puke."</p>
+<p>"As always, I am in your debt," Sol responded as he took hold of the sides and cursed profusely under his breath while he digested what had happened. "But please enlighten me - how is Iran any better in that respect?"</p>
+<p>Mia smiled and turned back to him, "We won't be staying long, darling. Rendezvous is set up on arrival courtesy of Lua - we'll be sipping <em>rakia</em> in Istanbul again by nightfall."</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<h2></h2>
+
+<em>Istanbul, Turkey. 10:52pm</em>
+
+<p>There's a saying tourists can often spot in the city: <em>You call it chaos, we call it home</em>. A city of more than 15 million people packed to the brim with musicians on streetcorners and the smell of spiced meat wafting off its shores. The history of Istanbul is sewn with intertwining threads as rich and complex as those of the lives of its inhabitants. More than anything else, it is a city at the crossroads, divided by a body of water with the weight of continents underneath it. And out from this water have sprung roads like arteries and buildings like hairs, all feeding off of the lifeblood that is the hum of Istanbul.</p>
+<p>A black van is speeding through the arteries of the city, carrying two unrelenting souls on a journey back into the heart of this chaos. Into the heart of their home.</p>
+<p>Sol and Mia climbed the last few metres up a small street in the core of Istanbul's Galata district. Sol glanced behind him and caught the coned head of Galata Tower sparkling with reflections of the city around it. Neighbours watched them enter from windows above. Sol smiled and waved as they proceeded into their apartment building.</p>
+<p>Inside, wood paneling and warm lighting throughout the apartment gave it a constant wood cabin feel. A mix of industrial and bohemian, the space held evidence of years of memories despite the owners' nomadic ways. Next to the door was a tall thin table for things like keys and glasses. A deep sofa cushioned a set of magazines while a blanket fell over its edges. Pictures and postcards donned the fridge, while ceramic mugs and semi-spilled coffee beans littered the walnut tabletops. Candles lay strewn across every second surface. Small conveniences that meant Sol and the others could always feel secure here. All of it was Lua's doing, her secret power as it were.</p>
+<p>"Pour us a glass and get out the cigarettes, yeah?" Mia ordered casually while running off to use the bathroom first.</p>
+<p>After chugging a glass of water, Sol grabbed the nearest shirt and washed his face down. As instructed, he dug up cigarettes from one of the various drawers and fetched the rakia from the fridge. With supplies in hand he proceeded to the balcony and plopped down on one of the cozy wicker chairs.</p>
+<p>He gazed across the waters of Istanbul that separated the two contrasting cultures he'd grown up in. A low hum of street musicians crossed with gossiping locals filled the air, carried by the cool breeze that chilled with the coming of winter. Even though it could never be home - no place could anymore - Istanbul would always feel like a place he could belong. And more importantly, it was an important crossroads for black market money. For those on a journey between East and West, this was the transition point. Between dirty and clean. Between who we were and who we want to be.</p>
+<p>Mia finally returned, looking notably freshened and carrying two small glasses.</p>
+<p>She poured the pair full and handed one to Solomon.</p>
+<p>"To a job well fucked," she groaned while raising her glass to him slightly. Sol gestured in return and sipped quietly. The pair each lit a cigarette in succession. The crackle of slowly burning paper was followed by the kind of exhale that only an overworked nicotine-starved smoker can produce.</p>
+<p>Mia broke the silence first.</p>
+<p>"Right. Now what?"</p>
+<p>Solomon was caught unawares. His mind remained in a daze from the transitory nature of their escape, and he had bigger things on his mind now that the job was done. There would be more work soon enough, his experience told him that. But in the meantime, he had to lie low and cover his tracks.</p>
+<p>New Scotland Yard, Interpol, and every other law enforcement agency that had a mandate would be at their most focused just yet. After more than ten years of a life with constant periods of legal heat, the needs were starting to get weary. Sol knew very well that this is how criminals eventually get caught. Your first few jobs are high-pressure and you feel the heat like an open oven in your face at all times. But with each success you gain more confidence, you start to realise the odds are actually in your favour. Why stop now?</p>
+<p>"Well, while I'm here I might as well find Mehmet. Restock on supplies and figure it out from there," Sol suggested. His mind was returning to clarity, its neuron pathways lighting up like the slow burn of highway streetlights.</p>
+<p>Now that he'd survived the gig and still managed to collect a portion of his payment, the important thing was to get moving on his bigger plans. For that, he would first need a skilled craftsman. Mehmet was that craftsman.</p>
+<p>Mehmet wasn't officially someone Sol kept in his tight-knit pack, but rather someone more like a trusted advisor. His network was expansive; he had tentacles reaching into every hidden cluster of the city. If it had dirt on it, Mehmet would know where it came from. In part this was due to his trade.</p>
+<p>Anyone who's ever spent time making forged notes, diplomas, or certificates knows that in this case, often times, the better the tools, the better the results. And no one had better tools than Mehmet. While officially a well-reputed print shop for religious texts and local ornate books, Mehmet's operation was at its heart a veritable queen's bazaar of forgery materials.</p>
+<p>"Of course. See what gossip is in the village," Mia responded without much surprise.</p>
+<p>She knew Sol usually took time between jobs to work on something. Exactly what that something could be was becoming clearer with each trip to Istanbul, but remained elusive.</p>
+<p>She quizzed Sol further while pouring herself another rakia, "The gig's done, Sol, and you said it yourself - you don't want any more of these sandbox gigs, so what do you expect to learn from Mehmet? He'll get suspicious."</p>
+<p>Sol snorted out a dull laugh, "Oh, I'm quite sure Mehmet has the brains to figure out exactly what we do. The man has a craft I admire, and if any of our bedouin buds are after us, he'll let me know."</p>
+<p>Mia was Solomon's closest confidant, but even she knew that this was as close as she would get for now. She ashed her cigarette and let the subject drop like the greying tips that fell from its end. Something else had been weighing on her mind.</p>
+<p>"We can't stay in Istanbul," she began, staring into the murky fog of her rakia and water.</p>
+<p>"I know," Sol interrupted. "There's heat here. We've got 36 hours at most."</p>
+<p>Mia couldn't help but ask, "And the money?"</p>
+<p>"We're more mister one percent than mister two percent this time, but it's something. It's in your account already," Sol replied calmly.</p>
+<p>Mia cleared her throat and nodded in agreement.</p>
+<p>The operation had gone through its fair share of iterations over the years since the first jobs. More clientele meant more risks of episodes like the one tonight, and payment needed to be collected without further exchange.</p>
+<p>It was Solomon's history in technology services that gave him the idea of splitting out the payment. One percent to run the gig and the second half once the verification was completed. It took some haggling, and reminders that Sol was behind most of their cybersecurity, but they came round. In this case, the Emiratis had likely cleaned out and switched the core bank accounts connected to the system, forcing it to reject the charge by the time it came around. But this was the black market of the criminal underworld - what could he do, write a bad review?</p>
+<p>Mia had refilled their glasses and began to prepare them another drink when she finally asked, "So, was it the Van Gogh from Cairo?"</p>
+<p>"Indeed," Sol replied with a certain level of pride. "And two others that are zero-day as of yet. Smart heist."</p>
+<p>He watched as Mia poured the well-chilled water into the rakia, creating a small galaxy of unfurling white liquid within each glass. It reminded Solomon of chocolate milk ads when he was a child.</p>
+<p>"<em>Poppy Flowers</em>," he began to elaborate, "she's much more stunning in person than you first imagine really. As with much of Van Gogh's work, how much vigor and depth he can bring with those thick tufts of paint is really what makes it so powerful seen up close."</p>
+<p>Solomon never really knew how much Mia saw during each gig, but he gathered from her look that she certainly wasn't able to ever get a look at the piece. Eager to indulge her curiousity, he gave her a further account of his time with the multimillion dollar stolen artwork inside a container earlier today.</p>
+<p>"But you know what captivates me? It's not his flowers. He wasn't exactly a happy man after all, so that's not surprising. It's his backdrops. They're composed of a kind of mud brown you only find in the back corner of a dirty pub or a Paris apartment in the nineteenth century. It's so perfectly bloody depressing," Solomon ended as the two fell into a release of laughter.</p>
+<p>Left to their thoughts, the pair gazed upon the city and smoked quietly. Like a heart pumping blood to a runner's veins, the hustle of pedestrians on Istiklal Avenue shone to their right. Warm streetlights followed a chaotic grid until their abrupt end upon the blackness of the Bosphorous, small portions of it still glistening with the lights of evening cruise boats. Faint lines of mist crisscrossed the outlines of the Bosphorous Bridge, giving everything a cinematic feel and reminding Sol of the change in season.</p>
+<p>Sol felt a small surge of excitement. They had just cleared half a million dollars in revenue for the year with this latest gig and it was only the end of October. Criminal organisations weren't so different from the rest of the world when it came to holiday season; things would slow down and he could fill the team in on the bigger plan. The bigger plan would be the only way to secure their safety long-term. He knew they worried about these things. Especially Mia.</p>
+<p>"Do you realise what kind of money we've just made?" Solomon asked with a cheeky smile.</p>
+<p>"Enough to keep us quiet for the rest of the year I hope," Mia smiled back tersely.</p>
+<p>"Quite. Don't worry, I'm with you on that one. But…" Sol began.</p>
+<p>"But you need me with you for the last Andersen consult," Mia completed his sentence for him.</p>
+<p>Sol sipped his drank and reconsidered his thoughts before replying, "Well, yes -  Jakob enjoys your presence, let's say."</p>
+<p>"But there's more than that," he continued, his presence taking on a greyness to match the cool October sky. "I've taken heed to what you and Lua suggested. Mehmet will confirm things for me, but there is indeed most likely war brewing. I don't want to face it any more than you do. We've been lucky to have the peace we've experienced."</p>
+<p>Mia's focus shifted from the mesmerizing lights of the Bosphorous Bridge to Sol's clenched jaws.</p>
+<p>There had always been a sense of shared understanding between the two of them. Mia's ability to deeply understand people's motivations have given her a god-like ability in predicting humans. It's made her both an undetectable trail and a fiercely forward-thinking adversary, a talent only Sol had so far managed to tame enough to utilise. To add to matters, Mia was a walking version of Sol's algorithm when it came to forgeries. Her hand worked as sharp as her brain; with speed and sensitivity. From forged visas to certifications and building entry passes, Mia could learn to remake anything in excruciating detail from all aspects within days.</p>
+<p>As with all talents, however, this capability bears a scar upon its owner. Like many other women born to backward cultures who refuse to respect them, Mia found herself orphaned from a young age (some say from birth) - a product of parents who felt only sons would give them the value they seeked to get from a child. She learned quickly that institutions were built on paperwork, that paper meant power. So she produced paperwork. The perfect paperwork that would set her free from the world of walls she'd been forced to grow up in. The finest forgeries Turkish bureaucracy had ever laid eyes on. They were accepted, naturally. But then all that remained was a fierce 13-year old left to forge her own way in the world. A world that was even less kind than the one she had so effortlessly faked her way out of. Struggles lashed at the girl until and with each hit she felt the ground toughen her. She learned to survive, then to steal, then to thrive. And it was only then that 'Mia' was born. Who she was before, only she will ever know.</p>
+<p>"Peace never lasts. You taught me that," Sol continued, breaking her from her reverie. "And I believe you. Listen" - he leaned in, his eyes glistening now with the kind of excitement only a grand scheme would bring - "I'll handle Jakob. I need you to take the Corridor instead, there's a package in Salonica that we'll need. Grab it and meet me in Amsterdam after the consult."</p>
+<p>Mia nodded. She was sharp enough to connect dots on her own and trusted Solomon too much to ever ask further questions.</p>
+<p>"There's one more thing," Sol leaned back and continued, "Notify the others to meet us there as well. Once I talk to Mehmet and confirm the rumours, I will have an announcement for us."</p>
+<p>Solomon was burning to tell Mia more. Burning to revel in the excitement of the plan's details with her. But Neil was right, we couldn't yet, not until we knew what was really going on with the higher-ups. It would put her at risk, and While Sol insisted they were never his subordinats or employees, he knew he'd never put them at risk and neither they him. Their bond was one of common craft and common misery, and his leadership was by nature of his role rather than his desire. Neither his brain nor his heart would allow him to put her in any further risk.</p>
+<p>He remembered solemnly how they'd met. Two souls locking eyes between bursts of multicoloured strobe lights, both floating like heavy vapours in the depths of a rabbit-hole club bursting of bass. He looked at her eyes now, still holding that look of hope tinged by the burnscars of a life well-steeled. He longed to stem that pain. His heart ached with the knowledge that he never could.</p>
+<p>But, he thought, there is one thing that always did work. He gulped down the rest of his rakia and smiled mischievously at her. "To Midnight?"</p>
+<p>Mia's eyes glared back at him. She understood perfectly why he suggested the very same club they'd first met in.</p>
+<p>"Come on Mia," Sol insisted with the same cheeky smile she had come to expect. "We've just finished our last gig of the year, we're safe, we're here, we're alive and young. Plus, who's going to find us in that grungy techno-hell?" </p>
+<p>Mia laughed. Music. Only music had brought them together and only music would ever fix them, she sometimes believed. And not just any music, but that low thick undulating frequency that would drive them along the streets of their own inner darkness. The ferocity of beats that would put them in a collective trance and extinguish them of all that burns their hearts.</p>
+<p>Mia let out a breath. All was still. Sol caught the corner of her vision and pleaded with his eyes.</p>
+<p>Finally, gulping down the last of her rakia, she announced, "Oh fuck it, fine, fine. Let's go to Midnight - YOLO and all that," she said, trying out some colloquialisms I had taught her.</p>
+<p>Sol clapped his hands together and rose from his chair with gusto to get ready. As he left the balcony, he thought to share, "Oh and Mia, it's not true."</p>
+<p>Mia, now also gearing herself up to change, stopped in surprise, "What's not true?"</p>
+<p>"YOLO; it's a misnomer," Sol replied with a wink. "You only <em>die</em> once. You get to live every day."</p>
+
+&nbsp;
+&nbsp;
+<center>*</center>
+&nbsp;
+&nbsp;
+
+<p>Istanbul has many sides to go with its many names and cultures. Its inhabitants have seen empires from around the globe battle for centuries over the terrain they now call home. These influences, and in particular its more recent history under legendary leader Mustafa Kemal Ataturk, have created a society which, while seemingly conservative and at times Islamic, retains the darker underbelly found in any Western democratic city. In fact, one might argue that conservative cultures produce more radical hidden countercultures than their free-roaming conterparts. From literally underground raves to rampant homosexuality, drug use and law-bending street scams - Istanbul was a melting pot of debauchery after the hour of midnight.</p>
+<p>This sentiment surrounding midnight and all its inner and outer darkness was the inspiration for the club that Mia and Sol were bound for. It consisted of a garage-sized room in a backstreet along the outer rim of Beyoğlu, Istanbul's vibrant hub of activity on the European side. Midnight was a home for the disenfranchised who were only healed by music. It held no sign, had no online presence, and was raided more often than a stoner's fridge. Entry was first filtered by those brave enough to cross the alleys that led to it, and second by a bear-like bouncer who knew every reveler of Istanbul by name.</p>
+<p>Along the outer avenues of Beyoğlu's hustle and bustle, strings of restaurants dotted the streets, their outdoor heat lamps giving the cobbled pavement a warm glow. A caucophony of musical styles filled the airwaves from a handful of bars, their patrons spilling out in droves of laughter and cigarettes. In amongst the crowd of revelers, two black-clad figures made their way through the slowly-waning chaos.</p>
+<p>Mia had arranged for them to meet with Zeynep and Aliçan along the outer banks somewhere near here. Zeynep was a well-respected and enigmatic DJ within the underground tech house scene, and her partner Aliçan was a fairly uninspiring but razor-sharp programmer from a town by the southern border with Syria. They would be considered an odd couple by most standards. Her, full of sharp edges and with a burning, black confidence that carried into her performances, and then him, a straight-and-narrow boy who wore ill-fitting shirts and never seemed to say anything interesting. Still, they had stuck together despite their outward differences, and their relationship had charmed Sol and Mia over the years.</p>
+<p>In fact, they had known for years that the couple were actually both gay. It wasn't safe, in their community at least, for either to be publicly out, and so an arrangement of sorts must have been made. It's a common enough one that most can read through, but a necessary one even so. Further to that, having a man like Aliçan around definitely helped keep the heat off Zeynep given her late-night schedules.</p>
+<p>Mia's energy had picked up and in some ways, she had come to realise that Sol was right in some ways. They were yet young, and they had escaped with their lives - again. There were troubles ahead, but life seemed to be right here in front of them. While the core of the operation consisted of just four of them, it was often Mia and Sol who had to take a leading role in operations. Istanbul, while never actually home to any of the crew except Mia, served as homebase for most oprations, which gave the pair of them a fair amount of the year together. And often times, where work ended, the pair picked up quickly in play.</p>
+<p>"Zeynep's set is ending, she said to meet them up here somewhere," Mia shouted back while tapping her phone and criss-crossing tourists like a local.</p>
+<p>Sol's time in East Asia taught him how to dodge bodies like Neo did bullets, but he was rarely a match for Mia's effortless footwork. He shouted up, "Lead the way, as long as there's bass at the end of it."</p>
+<p>They eventually found Zeynep along a side alley buying popcorn from a man with a mobile popcorn cart. She gestured warmly welcomed them both with hugs and a few kernels each. They all shared popcorn and the man's warm popcorn fire to catch up while they waited for Aliçan.</p>
+<p>"You never come out on a Thursday, I'm so glad! I told Aliçan I was missing you, Mia - and Sol, your energy, it's so good. Where have you been?" Zeynep was energetic and easy to get along with as always.</p>
+<p>Sol remained cryptic. While Zeynep was aware that his business wasn't entirely white-collar, she was keen to stay out of the details. "You know me, Zeynep - work. But don't worry, Europe is my wife, but Istanbul is always my mistress. How's the scene these days?"</p>
+<p>"We are missing some fresh blood, you know? Emotional things. Music, it needs emotion. But anyway, my friend tonight - she is good, I think you will enjoy her," Zeynep communicated excitedly in her skimmed version of English.</p>
+<p>Mia switched to Turkish and asked delicately, "It's safe tonight, at Midnight?"</p>
+<p>Zeynep made a hand gesture indicating 'so-so' and the pair continued in Turkish about the state of politics in the country. An election had recently been overturned by the ruling party; they had clearly lost and yet refused to accept the results. Tensions were running high in Ankara, locals hoped they wouldn't carry over to more-secular Istanbul.</p>
+<p>"They are making it more Islamic, and they say because of Ataturk - but this is not what Ataturk wanted! It's crazy," complained Zeynep, leaning in closer to keep from being heard. "Hey, they will go after all the foreigners' money also, be more careful with your business, okay?" she advised in a hushed tone.</p>
+<p>Aliçan arrived shortly thereafter, cordial as always. The triplet dropped the subject quickly, knowing any risky talk on the streets would be strongly chided by Aliçan.</p>
+<p>Zeynep was still on a high after her set and ready to get moving. "My friend will play soon, let's go to Midnight?" She asked rhetorically while dumping the remainder of the popcorn and skipping her way out of the backstreets, motioning for us all to follow suit.</p>
+<p>Midnight was crammed despite the early hour. Dozens of dark bobbing heads were silhouetted against the cave-like walls, glowing with a tinge of blue from the recessed lighting. Some were sniffing coke off of others, and others were smoking all manner of consumables. The low frequency of a thick bassline thumped their organs in time with each beat, and a melody began to unfold in the mid-range. Led by Zeynep, the rest followed, Solomon last in line, his eyes slowly lowering themselves in a dull trance.</p>
+<p>The air was thick, humid with the weight of unreleased tension. As the first hour passed and everyone was served their vices of choice, each became lost in his or her own paradise. Solomon, ever entranced by the strong, driving kicks that Midnight's DJs were known for, pumped onward and inward. Mia, never far away by professional habit, floated dreamily amongst the crowd, comforted and cocooned. Zeynep took the frontline, chasing ever stronger decibels, while her partner idled by the sidelines conversing with confidants.</p>
+<p>Each club, and each night, holds its own unique energy. Each night is like a person, waiting to be met and released unto the world. To touch the lives of others, even if only for an instant, and live as if it were eternity. When the night meets its revelers - not just those who come for its start, but those who arrive with a conviction to stand until its shining close - only then can sparks fly and chemicals be released. Tonight had met its revelers, and they welcomed it with open arms.</p>
+<p>The music became louder, its beat per minute count now approaching cruising altitude. The flow of vice continued. Heads bobbed, arms flung, and souls embraced. Solomon was in the throes of a crescendo when the woman next to him suddenly turned and kissed him. They continued, bodies pulsating against each other like sine waves, lost in the trance of a momentary kiss.</p>
+<p>Zeynep abandoned her orbit and snuck quietly to the subterranean lavatories. The most dangerous things are those which are never said, she said to her own face in the rust-stained mirror. Her features were sharper than the average Turkish woman; her short hair gave prominence to her strongly-cut cheekbones and her almond-tipped eyes came in a cloudy shade of hazelnut.</p>
+<p>She saw the outline of bags underneath her eyes. 5:58am. The night was taking its toll.</p>
+<p>"I think I'll head back before the cops get here again," she mentioned to a now-alone Solomon upon her return to the floor.</p>
+<p>"Wait - I'm beat too, can I join you?" he asked, removing himself from the stronghold of dancers he was intertwined with.</p>
+<p>Feeling braver now, Mia took hold of his right hand and marched them both out of the crowds. They hugged Zeynep and bid farewell to Aliçan, both of whom had maintained their positions from earlier in the night. After making their way safely out of the area using Mia's side route, the pair shared a cigarette while waiting for a taxi to make the rounds near them.</p>
+<p>"Feeling fixed?" Sol asked while admiring the night sky.</p>
+<p>"I never said I was broken," Mia responded curtly.</p>
+<p>"Neither did I," Sol smiled back. "I needed that, though. That place again."</p>
+<p>"It's not what it was," Mia replied gingerly.</p>
+<p>"Nothing is what it was anymore. This place, this city, us - it will all keep changing. Round and round in circles we go, change is the only constant."</p>
+<p>"So when do we get to rest, Sol? When do we stop running?" Mia often spoke this way; referring to both the topic and something bigger in their lives with the same vague description.</p>
+<p>Sol spotted a taxi and flagged it down, relieved to escape the topic at hand. They jumped in, embracing the mild heat within after standing in the early-morning cold. The driver was quiet and kept the radio on at a low hum. They sat closely, and Mia rested her head on Sol's shoulder.</p>
+<p>"You're a strong one, Mia. I just need you to hold on a little longer, then I promise we'll rest," he whispered to her quietly.</p>
+<p>"It's not a long drive," she replied after a brief pause, feigning ignorance about his real meaning again.</p>
+<p>The taxi moved slowly around the city streets. Solomon could see various workers summoning the beginning of the day in the early morning gradient of blue light. Mia felt warm along his left side, her presence always bringing him a sense of comfort and safety. He gave her a slight, momentary squeeze, as if to re-assert this comfort.</p>
+<p>Mia felt the same warmth in that moment Sol embraced her just that little bit tighter. It always seemed that way with them - just that little bit tighter, but never for too long. She felt weary with the weight of her feelings. A kind of dreamy drowsiness came upon her as she swayed and swerved gently with the taxi's turns, each time her lips inching closer to his skin. It was blurry late-night/early-morning times like these, disconnected and unattached to any semblance of normal life, that she felt most lost and yet most safe. As if anything she did in this time wouldn't really exist; it was simply a point of transit, a journey and an end in one. Intoxicated by this feeling of transience, she lifted her head slightly and allowed the bounce of the road to bring it closer to his. With each moment her breath became hotter on his skin, her lips beginning to radiate their presence along it ever so slightly.</p>
+<p>Sol sensed a subtle increase in tension. Mia's breath began to steam the nape of his neck, and he sensed her lips inching closer to his skin. Taken in by the drowsiness of his stupor and the sheer intoxication of her warmth, he allows himself to close the gap. The plump softness of her lips meet the small of his neck and he feels a warm glow make his body tingle. She continued, softly, in secret. His minded clouded even further and he felt as if his eyes were rolling out of the back of his head. The tingling sensation carried up his spine and into his jaw, forcing his mouth open slightly, followd by a small gasp. The tip of his penis seemed to make an automatic effort to unsheath itself. His breathing became constricted and his grip tightened. He felt himself beginning to lose control. He pulled upward, severing the connection of a thousand bolts that held her lips in place.</p>
+<p>He resisted the urge, knowing that the price of not doing so would be higher than he could pay. As if reading him again, Mia retracted her head slowly and fell into a soft lull. She kept her head on his shoulder as they travesed Istanbul's early morning light, finally crawling home into their own separate, cold beds.</p>
+
+<h2 id="chapter-2">
+<a href="#chapter-2">The Corridors</a>
+</h2>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+
+
+<h1 id="end">END</h1>
+<h2 id="chapter_colophon">
+<a href="#colophon">Colophon</a>
+</h2>
+<p>Editions of this e-book for platforms that support custom typefaces use <a href="http://vollkorn-typeface.com/">Vollkorn</a>, the “free and healthy typeface for bread and butter use” designed by Friedrich Althausen and provided as a significant public good. In my opinion, it is the world’s best freely-available typeface for body text.</p>
+<p class="last-page"></p>
+<div id="bookmark">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 40 80" xml:space="preserve">
+<g>
+<polygon points="0,0 0,80 20,70 40,80 40,0"
+</g>
+</svg>
+</div>
+</div>
+<div class="shadow-page-container"></div>
+<button id="toc-button">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="100%" height="100%" viewBox="0 0 80 40" xml:space="preserve">
+<g>
+<rect x="0" y="10" width="5" height="1"/>
+<rect x="0" y="20" width="5" height="1"/>
+<rect x="0" y="30" width="5" height="1"/>
+<rect x="10" y="10" width="70" height="1"/>
+<rect x="10" y="20" width="70" height="1"/>
+<rect x="10" y="30" width="70" height="1"/>
+</g>
+</svg>
+</button>
+</body>
+</html>
