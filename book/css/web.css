@@ -295,8 +295,9 @@ div#bookmark {
 }
 
 div.book div.title {
-  display: flex;
-  flex-direction: column;
+  /*display: flex;
+  flex-direction: column;*/
+  display: inline-block;
   justify-content: center;
 
   width: var(--column-width);
